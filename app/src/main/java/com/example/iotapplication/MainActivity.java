@@ -24,10 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         btn = (Button) findViewById(R.id.btn);
         txtView = (TextView) findViewById(R.id.txtView);
-
         btn.setOnClickListener(this);
 
     }
@@ -35,20 +33,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         displaySpeechRecognizer();
-
-    }
-
-    public void voiceinputbuttons() {
-        btn = (Button) findViewById(R.id.btn);
-        txtView = (TextView) findViewById(R.id.txtView);
     }
 
     private void displaySpeechRecognizer() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-
 // This starts the activity and populates the intent with the speech text.
-//        startActivityForResult(intent, SPEECH_REQUEST_CODE);
         someActivityResultLauncher.launch(intent);
     }
 
@@ -65,15 +55,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                         String spokenText = results.get(0);
                         // Do something with spokenText.
-                        if(spokenText.contains("exit")){
-                            System.out.println("exit");
-                            btn.setText(spokenText);
-                        }
-                        else if(spokenText.contains("cancel")){
-                            System.out.println("cancel");
-                            btn.setText(spokenText);
-                        }
+                        voiceReasoner(spokenText);
+//                        if(spokenText.contains("exit")){
+//                            System.out.println("exit");
+//                            btn.setText(spokenText);
+//                        }
+//                        else if(spokenText.contains("cancel")){
+//                            System.out.println("cancel");
+//                            btn.setText(spokenText);
+//                        }
                     }
                 }
             });
+
+    private void voiceReasoner(String spokenText){
+
+    }
+
+
 }
