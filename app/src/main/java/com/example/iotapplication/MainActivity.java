@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btn;
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn = (Button) findViewById(R.id.btn);
         txtView = (TextView) findViewById(R.id.txtView);
         btn.setOnClickListener(this);
+
 
         //Used for testing
        // createActuatorsTest();
