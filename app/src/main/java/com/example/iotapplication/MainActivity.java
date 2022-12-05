@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(spokenText.contains("lock")){
             //    System.out.println("lock");
-            btn.setText(spokenText);
+            //btn.setText(spokenText);
+            voiceLockReasoner(spokenText);
         }
     }
 
@@ -123,11 +124,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-
-
     }
 
     private void voiceLockReasoner(String spokenText){
+        if(spokenText.contains("turn on")){
+            for(Lock lock : listOfLocks){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                    lock.turnON();
+                    btn.setText(lock.getName() + " Turned on");
+                    return;
+                }
+                else{
+                    btn.setText("No such lock");
+                }
+
+            }
+        }
+        else if(spokenText.contains("turn off")){
+            for(Lock lock : listOfLocks){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                    lock.turnOff();
+                    btn.setText(lock.getName() + " Turned off");
+                    return;
+                }
+                else {
+                    btn.setText("No such lock");
+                }
+            }
+        }
+        else if(spokenText.contains("check")){
+            for(Lock lock : listOfLocks){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                    if(lock.getStatus()){
+                        txtView.setText("On");
+                        btn.setText(lock.getName() + " is " +lock.getStatus());
+                        return;
+                    }
+                    else{
+                        txtView.setText("Off");
+                        btn.setText(lock.getName() + " is " + lock.getStatus());
+                    }
+                }
+            }
+        }
 
     }
 
@@ -136,25 +175,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        Light light1 = new Light("light one", "light 1", false);
-        Light light2 = new Light("light two", "light 2", false);
-        Light light3 = new Light("light three", "light 3", false);
-        Light light4 = new Light("light four", "light 4", false);
+        Light light1 = new Light("light one", "light 01", false);
+        Light light2 = new Light("light two", "light 02", false);
+        Light light3 = new Light("light three", "light 03", false);
+        Light light4 = new Light("light four", "light 04", false);
 
-//        Lock lock1 = new Lock("lock one", false);
-//        Lock lock2 = new Lock("lock two", false);
-//        Lock lock3 = new Lock("lock three", false);
-//        Lock lock4 = new Lock("lock four", false);
+        Lock lock1 = new Lock("lock one", "lock 01", false);
+        Lock lock2 = new Lock("lock two", "lock 02", false);
+        Lock lock3 = new Lock("lock three", "lock 03", false);
+        Lock lock4 = new Lock("lock four", "lock 04", false);
 
         listOfLights.add(light1);
         listOfLights.add(light2);
         listOfLights.add(light3);
         listOfLights.add(light4);
 
-//        listOfLocks.add(lock1);
-//        listOfLocks.add(lock2);
-//        listOfLocks.add(lock3);
-//        listOfLocks.add(lock4);
+        listOfLocks.add(lock1);
+        listOfLocks.add(lock2);
+        listOfLocks.add(lock3);
+        listOfLocks.add(lock4);
 
     }
 
