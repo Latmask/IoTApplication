@@ -7,17 +7,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -77,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         else if(spokenText.contains("light")){
             //  System.out.println("light");
-            btn.setText(spokenText);
+            //btn.setText(spokenText);
+            voiceLightReasoner(spokenText);
         }
         else if(spokenText.contains("lock")){
             //    System.out.println("lock");
@@ -88,15 +85,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void voiceLightReasoner(String spokenText){
         if(spokenText.contains("turn on")){
             for(Light light : listOfLights){
-                if(spokenText.contains(light.getName())){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnON();
+                    btn.setText(light.getName() + " Turned on");
+                    return;
                 }
+                else{
+                    btn.setText("No such light");
+                }
+
             }
         }
         else if(spokenText.contains("turn off")){
             for(Light light : listOfLights){
-                if(spokenText.contains(light.getName())){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnOff();
+                    btn.setText(light.getName() + " Turned off");
+                    return;
+                }
+                else {
+                    btn.setText("No such light");
+                }
+            }
+        }
+        else if(spokenText.contains("check")){
+            for(Light light : listOfLights){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+                    if(light.getStatus()){
+                        txtView.setText("On");
+                        btn.setText(light.getName() + " is " +light.getStatus());
+                        return;
+                    }
+                    else{
+                        txtView.setText("Off");
+                        btn.setText(light.getName() + " is " + light.getStatus());
+                    }
                 }
             }
         }
@@ -110,25 +133,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Used for testing
     private void createActuatorsTest(){
-        Light light1 = new Light("Light One", false);
-        Light light2 = new Light("Light Two", false);
-        Light light3 = new Light("Light Three", false);
-        Light light4 = new Light("Light Four", false);
 
-        Lock lock1 = new Lock("Lock One", false);
-        Lock lock2 = new Lock("Lock Two", false);
-        Lock lock3 = new Lock("Lock Three", false);
-        Lock lock4 = new Lock("Lock Four", false);
+
+
+        Light light1 = new Light("light one", "light 1", false);
+        Light light2 = new Light("light two", "light 2", false);
+        Light light3 = new Light("light three", "light 3", false);
+        Light light4 = new Light("light four", "light 4", false);
+
+//        Lock lock1 = new Lock("lock one", false);
+//        Lock lock2 = new Lock("lock two", false);
+//        Lock lock3 = new Lock("lock three", false);
+//        Lock lock4 = new Lock("lock four", false);
 
         listOfLights.add(light1);
         listOfLights.add(light2);
         listOfLights.add(light3);
         listOfLights.add(light4);
 
-        listOfLocks.add(lock1);
-        listOfLocks.add(lock2);
-        listOfLocks.add(lock3);
-        listOfLocks.add(lock4);
+//        listOfLocks.add(lock1);
+//        listOfLocks.add(lock2);
+//        listOfLocks.add(lock3);
+//        listOfLocks.add(lock4);
 
     }
 
