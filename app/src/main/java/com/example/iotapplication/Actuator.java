@@ -17,8 +17,12 @@ public abstract class Actuator {
         return status;
     }
 
-    public void setStatus(Boolean status){
-        this.status = status;
+    public void turnON(){
+        status = true;
+    }
+
+    public void turnOff(){
+        status = false;
     }
 
     public String toString() {

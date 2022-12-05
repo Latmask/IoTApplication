@@ -13,6 +13,9 @@ import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btn;
     private TextView txtView;
-    private Set<Actuator> listOfActuators;
+    private ArrayList<Light> listOfLights = new ArrayList<>();
+    private ArrayList<Lock> listOfLocks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         displaySpeechRecognizer();
+        createActuatorsTest();
     }
 
     private void displaySpeechRecognizer() {
@@ -49,40 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     // You can do the assignment inside onAttach or onCreate, i.e, before the activity is displayed
-//    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult result) {
-//                    if (result.getResultCode() == Activity.RESULT_OK) {
-//                        // There are no request codes
-//                        Intent data = result.getData();
-//                        List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//                        String spokenText = results.get(0);
-//                        // Do something with spokenText.
-//                      //  voiceReasoner(spokenText);
-//                        if(spokenText.contains("Light") && spokenText.contains("Lock")){
-//                            txtView.setText("Too many instructions at once");
-//                            btn.setText("Invalid");
-//                            btn.setTextColor(Color.RED);
-//                            btn.setText(spokenText);
-//                        }
-//                       else if(spokenText.contains("Light")){
-//                            txtView.setText("Light");
-//                            btn.setText("Light");
-//                            btn.setTextColor(Color.GREEN);
-//                            btn.setText(spokenText);
-//                        }
-//                        else if(spokenText.contains("lock")){
-//                            txtView.setText("Lock");
-//                            btn.setText("Lock");
-//                            btn.setTextColor(Color.BLUE);
-//                            btn.setText(spokenText);
-//                        }
-//                    }
-//                }
-//            });
-
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -95,14 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String spokenText = results.get(0);
                         // Do something with spokenText.
                         voiceReasoner(spokenText);
-//                        if(spokenText.contains("light")){
-//                          //  System.out.println("light");
-//                            btn.setText(spokenText);
-//                        }
-//                        else if(spokenText.contains("lock")){
-//                        //    System.out.println("lock");
-//                            btn.setText(spokenText);
-//                        }
                     }
                 }
             });
@@ -123,6 +86,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void voiceLightReasoner(String spokenText){
+        if(spokenText.contains("turn on")){
+            for(Light light : listOfLights){
+                if(spokenText.contains(light.getName())){
+                    light.turnON();
+                }
+            }
+        }
+        else if(spokenText.contains("turn off")){
+            for(Light light : listOfLights){
+                if(spokenText.contains(light.getName())){
+                    light.turnOff();
+                }
+            }
+        }
 
 
     }
@@ -143,15 +120,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Lock lock3 = new Lock("Lock Three", false);
         Lock lock4 = new Lock("Lock Four", false);
 
-        listOfActuators.add(light1);
-        listOfActuators.add(light2);
-        listOfActuators.add(light3);
-        listOfActuators.add(light4);
+        listOfLights.add(light1);
+        listOfLights.add(light2);
+        listOfLights.add(light3);
+        listOfLights.add(light4);
 
-        listOfActuators.add(lock1);
-        listOfActuators.add(lock2);
-        listOfActuators.add(lock3);
-        listOfActuators.add(lock4);
+        listOfLocks.add(lock1);
+        listOfLocks.add(lock2);
+        listOfLocks.add(lock3);
+        listOfLocks.add(lock4);
 
     }
 
