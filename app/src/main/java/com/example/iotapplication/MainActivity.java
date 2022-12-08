@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // There are no request codes
                         Intent data = result.getData();
                         List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                        String spokenTextInitial = results.get(0);
+                        String spokenTextInitial = results.get(0).toLowerCase();
                         String spokenText = spokenTextInitial.toLowerCase();
                         voiceReasoner(spokenText);
                     }
@@ -202,9 +202,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Used for testing
     private void createActuatorsTest(){
-
-
-
         Light light1 = new Light("light one", "light 01", false);
         Light light2 = new Light("light two", "light 02", false);
         Light light3 = new Light("light three", "light 03", false);
