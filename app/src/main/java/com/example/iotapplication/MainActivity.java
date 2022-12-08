@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // There are no request codes
                         Intent data = result.getData();
                         List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                        String spokenText = results.get(0);
+                        String spokenTextInitial = results.get(0);
+                        String spokenText = spokenTextInitial.toLowerCase();
                         voiceReasoner(spokenText);
                     }
                 }
