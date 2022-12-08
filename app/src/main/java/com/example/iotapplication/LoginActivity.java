@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
                         username.getText().toString(), password.getText().toString()));
     }
 
+    //TODO hardcoded username = "admin" and password = "password"
     private void validation(String username, String password) {
         if(username.equals("admin") && password.equals("password")) {
             Intent intent = new Intent(this, MainActivity.class);
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    //Error message if the user inputs wrong username/password
     private void errorMessage(String message) {
         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
         dlgAlert.setMessage(message)
