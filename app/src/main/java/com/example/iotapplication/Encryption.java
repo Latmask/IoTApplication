@@ -16,7 +16,7 @@ import java.util.Calendar;
 public class Encryption {
 
 
-    public void InstanceGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public void PublicKeyEncryptionGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException {
         Date startDate = new Date();
 
         Calendar c = Calendar.getInstance();
@@ -39,6 +39,7 @@ public class Encryption {
         Signature signature = Signature.getInstance("SHA256withRSA/PSS");
         signature.initSign(keyPair.getPrivate());
     }
+
 
 
 
