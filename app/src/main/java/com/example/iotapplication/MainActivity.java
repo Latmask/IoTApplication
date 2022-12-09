@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btn;
     private TextView txtView;
-    private ArrayList<Light> listOfLights = new ArrayList<>();
-    private ArrayList<Lock> listOfLocks = new ArrayList<>();
+    private ArrayList<Actuator> listOfActuators;
     private TextToSpeech textToSpeech;
 
     @Override
@@ -32,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn = (Button) findViewById(R.id.btn);
         txtView = (TextView) findViewById(R.id.txtView);
         btn.setOnClickListener(this);
+        listOfActuators = new ArrayList<>();
         textToSpeech = new TextToSpeech(this, this);
 
     }
@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voiceLightReasoner(String spokenText){
         if(spokenText.contains("turn on")){
-            for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+            for(Actuator light : listOfActuators){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName()) && light instanceof Light){
                     light.turnON();
                     btn.setText(light.getName() + " Turned on");
                     speakText(light.getName() + " is now turned on");
@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         else if(spokenText.contains("turn off")){
-            for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+            for(Actuator light : listOfActuators){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName()) && light instanceof Light){
                     light.turnOff();
                     btn.setText(light.getName() + " Turned off");
                     speakText(light.getName() + " is now turned off");
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        else if(spokenText.contains("check")){
-            for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+        else if(spokenText.contains("check") || spokenText.contains("status")){
+            for(Actuator light : listOfActuators){
+                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName()) && light instanceof Light){
                     if(light.getStatus()){
                         txtView.setText("On");
                         btn.setText(light.getName() + " is " +light.getStatus());
@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voiceLockReasoner(String spokenText){
         if(spokenText.contains("turn on")){
-            for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+            for(Actuator lock : listOfActuators){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName()) && lock instanceof Light){
                     lock.turnON();
                     btn.setText(lock.getName() + " Turned on");
                     speakText(lock.getName() + " is now turned on");
@@ -153,8 +153,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         else if(spokenText.contains("turn off")){
-            for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+            for(Actuator lock : listOfActuators){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName()) && lock instanceof Light){
                     lock.turnOff();
                     btn.setText(lock.getName() + " Turned off");
                     speakText(lock.getName() + " is now turned off");
@@ -166,9 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        else if(spokenText.contains("check")){
-            for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+        else if(spokenText.contains("check") || spokenText.contains("status")){
+            for(Actuator lock : listOfActuators){
+                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName()) && lock instanceof Light){
                     if(lock.getStatus()){
                         txtView.setText("On");
                         btn.setText(lock.getName() + " is " +lock.getStatus());
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Use this method for any string that should be voiced by textToSpeech
     private void speakText(String toSpeak) {
-            textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+        textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
     //Used for testing
@@ -212,15 +212,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Lock lock3 = new Lock("lock three", "lock 03", false);
         Lock lock4 = new Lock("lock four", "lock 04", false);
 
-        listOfLights.add(light1);
-        listOfLights.add(light2);
-        listOfLights.add(light3);
-        listOfLights.add(light4);
-
-        listOfLocks.add(lock1);
-        listOfLocks.add(lock2);
-        listOfLocks.add(lock3);
-        listOfLocks.add(lock4);
+        listOfActuators.add(light1);
+        listOfActuators.add(light2);
+        listOfActuators.add(light3);
+        listOfActuators.add(light4);
+        listOfActuators.add(lock1);
+        listOfActuators.add(lock2);
+        listOfActuators.add(lock3);
+        listOfActuators.add(lock4);
 
     }
 }
