@@ -3,20 +3,27 @@ package com.example.iotapplication;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Calendar;
 
 public class Encryption {
 
 
-    public void PublicKeyEncryptionGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public void PublicKeyEncryptionGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
 
         Calendar c = Calendar.getInstance();
@@ -37,7 +44,11 @@ public class Encryption {
 
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         Signature signature = Signature.getInstance("SHA256withRSA/PSS");
-        signature.initSign(keyPair.getPrivate());
+
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey("key1", null);
+        PublicKey publicKey = keyStore.getCertificate("key1").getPublicKey();
+        signature.initSign(privateKey);
     }
 
 
