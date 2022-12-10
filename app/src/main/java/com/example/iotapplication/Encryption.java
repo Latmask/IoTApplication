@@ -49,6 +49,9 @@ public class Encryption {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey("key1", null);
         PublicKey publicKey = keyStore.getCertificate("key1").getPublicKey();
         signature.initSign(privateKey);
+
+        String object = "example";
+        byte[] signedObject = signature.update(object.toByteArray()).sing();
     }
 
 
