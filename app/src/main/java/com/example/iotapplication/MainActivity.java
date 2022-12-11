@@ -7,12 +7,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btn;
     private TextView txtView;
-    private ArrayList<Light> listOfLights = new ArrayList<>();
-    private ArrayList<Lock> listOfLocks = new ArrayList<>();
+    private ArrayList<Light> listOfLights;
+    private ArrayList<Lock> listOfLocks;
     private TextToSpeech textToSpeech;
 
     @Override
@@ -33,14 +39,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtView = (TextView) findViewById(R.id.txtView);
         btn.setOnClickListener(this);
         textToSpeech = new TextToSpeech(this, this);
+        loadData();
 
     }
 
     @Override
     public void onClick(View view) {
         displaySpeechRecognizer();
-        createActuatorsTest();
         speakText("Text to speech is functional");
+    }
+
+    private void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(listOfLights);
+        String json2 = gson.toJson(listOfLocks);
+        editor.putString("light list", json);
+        editor.putString("lock list", json2);
+        editor.apply();
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("light list", null);
+        String json2 = sharedPreferences.getString("lock list", null);
+        Type type = new TypeToken<ArrayList<Light>>() {}.getType();
+        Type type2 = new TypeToken<ArrayList<Lock>>() {}.getType();
+        listOfLights = gson.fromJson(json, type);
+        listOfLocks = gson.fromJson(json2, type2);
+
+        if (listOfLights == null && listOfLocks == null) {
+            listOfLights = new ArrayList<>();
+            listOfLocks = new ArrayList<>();
+            createActuatorsTest();
+        }
     }
 
     private void displaySpeechRecognizer() {
@@ -90,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnON();
+                    saveData();
                     btn.setText(light.getName() + " Turned on");
                     speakText(light.getName() + " is now turned on");
                     return;
@@ -105,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnOff();
+                    saveData();
                     btn.setText(light.getName() + " Turned off");
                     speakText(light.getName() + " is now turned off");
                     return;
@@ -115,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        else if(spokenText.contains("check")){
+        else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     if(light.getStatus()){
@@ -140,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnON();
+                    saveData();
                     btn.setText(lock.getName() + " Turned on");
                     speakText(lock.getName() + " is now turned on");
                     return;
@@ -156,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnOff();
+                    saveData();
                     btn.setText(lock.getName() + " Turned off");
                     speakText(lock.getName() + " is now turned off");
                     return;
@@ -166,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        else if(spokenText.contains("check")){
+        else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     if(lock.getStatus()){
@@ -197,8 +235,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Use this method for any string that should be voiced by textToSpeech
     private void speakText(String toSpeak) {
-            textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+        textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
+
+
 
     //Used for testing
     private void createActuatorsTest(){
@@ -211,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Lock lock2 = new Lock("lock two", "lock 02", false);
         Lock lock3 = new Lock("lock three", "lock 03", false);
         Lock lock4 = new Lock("lock four", "lock 04", false);
+
 
         listOfLights.add(light1);
         listOfLights.add(light2);
