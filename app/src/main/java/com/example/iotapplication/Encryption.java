@@ -20,7 +20,9 @@ import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Calendar;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 public class Encryption {
@@ -59,7 +61,7 @@ public class Encryption {
         byte[] signedObject = signature.update(object.toByteArray()).sing();
     }
 
-    public void AESEncryption() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException {
+    public void AESEncryption() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
@@ -73,6 +75,10 @@ public class Encryption {
         keyStore.load(null);
         key = (SecretKey) keyStore.getKey("key2", null);
 
+        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        String object = "example";
+        byte[] encryKey = cipher.update(object.toByteArray()).doFinal();
 
 
     }
