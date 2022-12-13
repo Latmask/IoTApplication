@@ -70,16 +70,29 @@ public class Encryption {
                         .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         .build());
-        SecretKey key = keyGenerator.generateKey();
+        SecretKey syncKey = keyGenerator.generateKey();
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
-        key = (SecretKey) keyStore.getKey("key2", null);
+        syncKey = (SecretKey) keyStore.getKey("key2", null);
 
         Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
+        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
         String object = "example";
-        byte[] encryKey = cipher.update(object.toByteArray()).doFinal();
+        byte[] encryObject = cipher.update(object.toByteArray()).doFinal();
 
+
+    }
+    public void TimerSyncKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        KeyStore keystore = KeyStore.getInstance("AndroidKeystore");
+        keystore.deleteEntry("syncKey");
+
+        Date startDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 2);
+        Date endDate = c.getTime();
+        if(endDate == startDate){
+            
+        }
 
     }
 
