@@ -17,6 +17,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -26,7 +27,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 public class Encryption {
-
+    Date endDate = null;
 
     public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
@@ -85,14 +86,22 @@ public class Encryption {
     public void TimerSyncKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         KeyStore keystore = KeyStore.getInstance("AndroidKeystore");
         keystore.deleteEntry("syncKey");
-
         Date startDate = new Date();
+
+        if(endDate == null || startDate.before(endDate)){
+           ChangeEndDate();
+        }
+
+        if(startDate.equals(endDate)){
+
+        }
+
+    }
+    public void ChangeEndDate(){
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 2);
         Date endDate = c.getTime();
-        if(endDate == startDate){
-            
-        }
+        this.endDate = endDate;
 
     }
 
