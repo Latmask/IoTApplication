@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
+
     //Taken from lab2, should work as it is
     public void run(String command) {
         String hostname = "130.237.177.207";
@@ -295,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.exit(2);
         }
     }
+
 
     //Used for testing
     private void createActuatorsTest(){

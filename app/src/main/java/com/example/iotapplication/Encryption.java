@@ -1,6 +1,7 @@
 package com.example.iotapplication;
 
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
@@ -17,16 +18,19 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Calendar;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 public class Encryption {
+    Date endDate = null;
 
-
-    public void PublicKeyEncryptionGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+    public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
 
         Calendar c = Calendar.getInstance();
@@ -44,6 +48,7 @@ public class Encryption {
                         .setKeyValidityStart(startDate)
                         .setKeyValidityEnd(endDate)
                         /*.setIsStrongBoxBacked(true)*/
+                        .setMaxUsageCount(60)
                         .build());
 
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -56,10 +61,14 @@ public class Encryption {
         signature.initSign(privateKey);
 
         String object = "example";
-        byte[] signedObject = signature.update(object.toByteArray()).sing();
+        try{
+            byte[] signedObject = signature.update(object.toByteArray()).sing();
+        }catch(KeyPermanentlyInvalidatedException e){
+            //generate new key
+        }
     }
 
-    public void AESEncryption() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException {
+    public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
@@ -68,12 +77,37 @@ public class Encryption {
                         .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         .build());
-        SecretKey key = keyGenerator.generateKey();
+        SecretKey syncKey = keyGenerator.generateKey();
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
-        key = (SecretKey) keyStore.getKey("key2", null);
+        syncKey = (SecretKey) keyStore.getKey("key2", null);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+        String object = "example";
+        byte[] encryObject = cipher.update(object.toByteArray()).doFinal();
 
 
+    }
+    public void TimerSyncKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        KeyStore keystore = KeyStore.getInstance("AndroidKeystore");
+        keystore.deleteEntry("syncKey");
+        Date startDate = new Date();
+
+        if(endDate == null || startDate.before(endDate)){
+           ChangeEndDate();
+        }
+
+        if(startDate.equals(endDate)){
+
+        }
+
+    }
+    public void ChangeEndDate(){
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 2);
+        Date endDate = c.getTime();
+        this.endDate = endDate;
 
     }
 
