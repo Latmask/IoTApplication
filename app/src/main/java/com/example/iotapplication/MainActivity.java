@@ -239,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     //Used for testing
     private void createActuatorsTest(){
         Light light1 = new Light("light one", "light 01", false);
