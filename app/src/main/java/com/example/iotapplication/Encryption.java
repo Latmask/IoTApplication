@@ -1,6 +1,7 @@
 package com.example.iotapplication;
 
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class Encryption {
                         .setKeyValidityStart(startDate)
                         .setKeyValidityEnd(endDate)
                         /*.setIsStrongBoxBacked(true)*/
+                        .setMaxUsageCount(60)
                         .build());
 
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -59,7 +61,11 @@ public class Encryption {
         signature.initSign(privateKey);
 
         String object = "example";
-        byte[] signedObject = signature.update(object.toByteArray()).sing();
+        try{
+            byte[] signedObject = signature.update(object.toByteArray()).sing();
+        }catch(KeyPermanentlyInvalidatedException e){
+            //generate new key
+        }
     }
 
     public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException {
