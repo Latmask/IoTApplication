@@ -4,7 +4,12 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -19,16 +24,45 @@ import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class Encryption {
-    Date endDate = null;
+public class Encryption implements Serializable {
+    private ArrayList<Light> listOfLights;
+    private ArrayList<Lock> listOfLocks;
+    private Date endDate = null;
+    public static void main(String args[]) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+
+       new  Encryption().AESEncryptionKeyGenerator();
+
+
+        KeyStore keyStore = new Encryption().GetKeyStore();
+        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+        Light light1 = new Light("light one", "light 01", 0, false);
+
+        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
+        cipher.doFinal(data);
+        for(int i = 0; i > data.length; i++){
+            System.out.print(data[i] + " ");
+        }
+    }
+
+    public KeyStore GetKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        return keyStore;
+    }
 
     public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
@@ -60,15 +94,15 @@ public class Encryption {
         PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
         signature.initSign(privateKey);
 
-        String object = "example";
+        /*String object = "example";
         try{
             byte[] signedObject = signature.update(object.toByteArray()).sing();
         }catch(KeyPermanentlyInvalidatedException e){
             //generate new key
-        }
+        }*/
     }
 
-    public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException {
+    public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
@@ -78,14 +112,19 @@ public class Encryption {
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         .build());
         SecretKey syncKey = keyGenerator.generateKey();
-        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        /*KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
-        syncKey = (SecretKey) keyStore.getKey("key2", null);
+        syncKey = (SecretKey) keyStore.getKey("syncKey", null);
 
         Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        String object = "example";
-        byte[] encryObject = cipher.update(object.toByteArray()).doFinal();
+        Light light1 = new Light("light one", "light 01", 0, false);
+
+        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
+        cipher.doFinal(data);
+        for(int i = 0; i > data.length; i++){
+            System.out.print(data[i] + " ");
+        }*/
 
 
     }
@@ -111,7 +150,29 @@ public class Encryption {
 
     }
 
+    private void createActuatorsTest(){
+        Light light1 = new Light("light one", "light 01", 0, false);
+        Light light2 = new Light("light two", "light 02", 0, false);
+        Light light3 = new Light("light three", "light 03", 0, false);
+        Light light4 = new Light("light four", "light 04",0, false);
 
+        Lock lock1 = new Lock("lock one", "lock 01", 0,false);
+        Lock lock2 = new Lock("lock two", "lock 02", 0,false);
+        Lock lock3 = new Lock("lock three", "lock 03", 0,false);
+        Lock lock4 = new Lock("lock four", "lock 04", 0,false);
+
+
+        listOfLights.add(light1);
+        listOfLights.add(light2);
+        listOfLights.add(light3);
+        listOfLights.add(light4);
+
+        listOfLocks.add(lock1);
+        listOfLocks.add(lock2);
+        listOfLocks.add(lock3);
+        listOfLocks.add(lock4);
+
+    }
 
 
 

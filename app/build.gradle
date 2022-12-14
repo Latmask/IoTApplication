@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.iotapplication"
-        minSdk 31
+        minSdk 32
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -38,4 +38,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
