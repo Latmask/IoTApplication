@@ -4,50 +4,52 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.Serializable;
+public class LoginActivity extends AppCompatActivity {
 
-public class LoginActivity extends AppCompatActivity implements Serializable {
-
-    private EditText username;
-    private EditText password;
-    private Button login;
+    private EditText etUsername, etPassword;
+    private TextView tvRegister;
+    private Button bLogin;
+    DBHelper DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        username = findViewById(R.id.userText);
-        password = findViewById(R.id.passwordText);
-        login = findViewById(R.id.loginButton);
-        login.setOnClickListener(
-                view -> validation(
-                        username.getText().toString(), password.getText().toString()));
-    }
+        etUsername = findViewById(R.id.tvMessage);
+        etPassword = findViewById(R.id.etPassword);
+        tvRegister = findViewById(R.id.tvRegister);
+        bLogin = findViewById(R.id.bLogin);
+        DB = new DBHelper(this);
 
-    //TODO hardcoded username = "admin" and password = "password"
-    private void validation(String username, String password) {
-        if(username.equals("admin") && password.equals("password")) {
-            Intent intent = new Intent(this, MainActivity.class);
+        bLogin.setOnClickListener(view -> {
+            String username = etUsername.getText().toString();
+            String password = etPassword.getText().toString();
+
+            if (username.equals("") || password.equals("")) {
+                Toast.makeText(getApplicationContext(), "Please enter all the fields", Toast.LENGTH_SHORT).show();
+            } else {
+                Boolean credentialsMatch = DB.checkUsernamePassword(username, password);
+                if (credentialsMatch) {
+                    Toast.makeText(LoginActivity.this, "Sign in successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Invalid credentials", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        tvRegister.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
             startActivity(intent);
-        }
-        else {
-            errorMessage("Wrong username or password.");
-        }
-    }
+        });
 
-    //Error message if the user inputs wrong username/password
-    private void errorMessage(String message) {
-        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-        dlgAlert.setMessage(message)
-                .setTitle("Error Message")
-                .setPositiveButton("OK", null)
-                .setCancelable(true)
-                .create()
-                .show();
+
     }
 }
