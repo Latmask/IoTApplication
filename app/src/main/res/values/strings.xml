@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">IoTApplication</string>
+    <string name="bLogin">Login</string>
+    <string name="tvUsername">Username</string>
+    <string name="tvPassword">Password</string>
+    <string name="register_here">Register Here</string>
+    <string name="register">Register</string>
+    <string name="reenter_password">Reenter Password</string>
+    <string name="smarthome">SmartHome</string>
+    <string name="homeicon">homeIcon</string>
+    <string name="backarrow">backArrow</string>
+    <string name="smarticon">smartIcon</string>
+    <string name="fab_light">fabLight</string>
+    <string name="fab_lock">fabLock</string>
+    <string name="fab_temperature">fabTemperature</string>
+    <string name="fab_microphone">fabMicrophone</string>
 </resources>

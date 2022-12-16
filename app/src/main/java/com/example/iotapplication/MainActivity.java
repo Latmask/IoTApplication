@@ -9,53 +9,69 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
+//import ch.ethz.ssh2.Connection;
+//import ch.ethz.ssh2.Session;
+//import ch.ethz.ssh2.StreamGobbler;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
-    private Button btn;
-    private TextView txtView;
+    private TextView tvMessage;
     private ArrayList<Light> listOfLights;
     private ArrayList<Lock> listOfLocks;
     private TextToSpeech textToSpeech;
+    private FloatingActionButton fabMicrophone, fabLight, fabLock, fabTemperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btn = (Button) findViewById(R.id.btn);
-        txtView = (TextView) findViewById(R.id.txtView);
-        btn.setOnClickListener(this);
+
+        tvMessage = findViewById(R.id.tvMessage);
+        fabLight = findViewById(R.id.fabLight);
+        fabLock = findViewById(R.id.fabLock);
+        fabTemperature = findViewById(R.id.fabTemperature);
+        fabMicrophone = findViewById(R.id.fabMicrophone);
+
+        fabLight.setOnClickListener(this);
+        fabMicrophone.setOnClickListener(this);
+        fabLock.setOnClickListener(this);
+        fabTemperature.setOnClickListener(this);
+
         textToSpeech = new TextToSpeech(this, this);
         loadData();
 
     }
 
-    @Override
-    public void onClick(View view) {
-        displaySpeechRecognizer();
-        speakText("Text to speech is functional");
+    public void onClick(View v) {
+        switch(v.getId()){
+            case (R.id.fabMicrophone):
+                displaySpeechRecognizer();
+                speakText("Text to speech is functional");
+                break;
+            case (R.id.fabLight):
+                changeActivity(LightActivity.class);
+                break;
+            case (R.id.fabLock):
+                changeActivity(LockActivity.class);
+                break;
+            case (R.id.fabTemperature):
+                changeActivity(TemperatureActivity.class);
+                break;
+        }
     }
 
     private void saveData() {
@@ -93,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         someActivityResultLauncher.launch(intent);
     }
 
-
     // You can do the assignment inside onAttach or onCreate, i.e, before the activity is displayed
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -113,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void voiceReasoner(String spokenText){
         if(spokenText.contains("light") && spokenText.contains("lock")){
-            btn.setText("Invalid");
+            tvMessage.setText("Invalid");
             speakText("Error: Please only give a command to one device at a time");
         }
 
@@ -135,12 +150,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     light.turnON();
 //                    run("actuator_reasoner.py" + " " + 1 + " " + light.getActuatorID());
                     saveData();
-                    btn.setText("Light " + light.getName() + " is now turned on");
+                    tvMessage.setText("Light " + light.getName() + " is now turned on");
                     speakText("Light " + light.getName() + " is now turned on");
                     return;
                 }
                 else{
-                    btn.setText("No such light");
+                    tvMessage.setText("No such light");
                     speakText("No such device is connected with this application");
                 }
 
@@ -152,12 +167,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     light.turnOff();
 //                    run("actuator_reasoner.py" + " " + 2 + " " + light.getActuatorID());
                     saveData();
-                    btn.setText("Light " + light.getName() + " is now turned off");
+                    tvMessage.setText("Light " + light.getName() + " is now turned off");
                     speakText("Light " + light.getName() + " is now turned off");
                     return;
                 }
                 else {
-                    btn.setText("No such light");
+                    tvMessage.setText("No such light");
                     speakText("No such device is connected with this application");
                 }
             }
@@ -166,14 +181,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     if(light.getStatus()){
-                        txtView.setText("On");
-                        btn.setText("Light " + light.getName() + " is turned on");
+                        tvMessage.setText("Light " + light.getName() + " is turned on");
                         speakText("Light " + light.getName() + " is turned on");
                         return;
                     }
                     else{
-                        txtView.setText("Off");
-                        btn.setText("Light " + light.getName() + " is turned off");
+                        tvMessage.setText("Light " + light.getName() + " is turned off");
                         speakText("Light " + light.getName() + " is turned off");
                     }
                 }
@@ -188,12 +201,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     lock.turnON();
 //                    run("actuator_reasoner.py" + " " + 1 + " " + lock.getActuatorID());
                     saveData();
-                    btn.setText("Lock " + lock.getName() + " is now turned on");
+                    tvMessage.setText("Lock " + lock.getName() + " is now turned on");
                     speakText("Lock " + lock.getName() + " is now turned on");
                     return;
                 }
                 else{
-                    btn.setText("No such lock");
+                    tvMessage.setText("No such lock");
                     speakText("No such device is connected with this application");
 
                 }
@@ -206,12 +219,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     lock.turnOff();
 //                    run("actuator_reasoner.py" + " " + 2 + " " + lock.getActuatorID());
                     saveData();
-                    btn.setText("Lock " + lock.getName() + " is now turned off");
+                    tvMessage.setText("Lock " + lock.getName() + " is now turned off");
                     speakText("Lock " + lock.getName() + " is now turned off");
                     return;
                 }
                 else {
-                    btn.setText("No such lock");
+                    tvMessage.setText("No such lock");
                     speakText("No such device is connected with this application");
                 }
             }
@@ -220,20 +233,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     if(lock.getStatus()){
-                        txtView.setText("On");
-                        btn.setText("Lock " + lock.getName() + " is turned on");
+                        tvMessage.setText("Lock " + lock.getName() + " is turned on");
                         speakText("Lock " + lock.getName() + " is turned on");
                         return;
                     }
                     else{
-                        txtView.setText("Off");
-                        btn.setText("Lock " + lock.getName() + " is turned off");
+                        tvMessage.setText("Lock " + lock.getName() + " is turned off");
                         speakText("Lock " + lock.getName() + " is turned off");
                     }
                 }
             }
         }
-
     }
 
     //Initializes textToSpeech, options of textToSpeech like language, pitch etc can be changed here
@@ -250,43 +260,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
-    public void sendToRun(Actuator actuator, Boolean onOff){
-        if(onOff){
-            run("actuator_reasoner.py" + " " + 2 + " " + actuator.getActuatorID());
-        }
-        else {
-            run("actuator_reasoner.py" + " " + 1 + " " + actuator.getActuatorID());
-        }
-    }
+//    public void sendToRun(Actuator actuator, Boolean onOff){
+//        if(onOff){
+//            run("actuator_reasoner.py" + " " + 2 + " " + actuator.getActuatorID());
+//        }
+//        else {
+//            run("actuator_reasoner.py" + " " + 1 + " " + actuator.getActuatorID());
+//        }
+//    }
 
     //Taken from lab2, should work as it is
-    public void run(String command) {
-        String hostname = "130.237.177.207";
-        String username = "pi";
-        String password = "IoT@2021";
-
-        StrictMode.ThreadPolicy policy = new
-                StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        try {
-            Connection conn = new Connection(hostname); //init connection
-            conn.connect(); //start connection to the hostname
-            boolean isAuthenticated = conn.authenticateWithPassword(username,
-                    password);
-            if (isAuthenticated == false)
-                throw new IOException("Authentication failed.");
-            Session sess = conn.openSession();
-            sess.execCommand(command);
-            System.out.println("ExitCode: " + sess.getExitStatus());
-            sess.close(); // Close this session
-            conn.close();
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-            System.exit(2);
-        }
-    }
-
+//    public void run(String command) {
+//        String hostname = "130.237.177.207";
+//        String username = "pi";
+//        String password = "IoT@2021";
+//
+//        StrictMode.ThreadPolicy policy = new
+//                StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//
+//        try {
+//            Connection conn = new Connection(hostname); //init connection
+//            conn.connect(); //start connection to the hostname
+//            boolean isAuthenticated = conn.authenticateWithPassword(username,
+//                    password);
+//            if (isAuthenticated == false)
+//                throw new IOException("Authentication failed.");
+//            Session sess = conn.openSession();
+//            sess.execCommand(command);
+//            System.out.println("ExitCode: " + sess.getExitStatus());
+//            sess.close(); // Close this session
+//            conn.close();
+//        } catch (IOException e) {
+//            e.printStackTrace(System.err);
+//            System.exit(2);
+//        }
+//    }
 
     //Used for testing
     private void createActuatorsTest(){
@@ -310,6 +319,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listOfLocks.add(lock2);
         listOfLocks.add(lock3);
         listOfLocks.add(lock4);
+    }
 
+    public void changeActivity(Class<? extends Activity> destinationActivity) {
+        Intent intent = new Intent(this, destinationActivity);
+        startActivity(intent);
+        finish();
     }
 }
