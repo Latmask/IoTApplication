@@ -4,6 +4,8 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidAlgorithmParameterException;
