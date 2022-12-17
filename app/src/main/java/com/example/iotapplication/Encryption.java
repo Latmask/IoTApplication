@@ -5,6 +5,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -19,16 +20,45 @@ import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class Encryption {
-    Date endDate = null;
+public class Encryption implements Serializable{
+    private ArrayList<Light> listOfLights;
+    private ArrayList<Lock> listOfLocks;
+    private Date endDate = null;
+    public static void main(String args[]) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+
+        new  Encryption().AESEncryptionKeyGenerator();
+
+
+        KeyStore keyStore = new Encryption().GetKeyStore();
+        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+        Light light1 = new Light("light one", "light 01", 0, false);
+
+        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
+        cipher.doFinal(data);
+        for(int i = 0; i > data.length; i++){
+            System.out.print(data[i] + " ");
+        }
+    }
+
+    public KeyStore GetKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        return keyStore;
+    }
 
     public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
