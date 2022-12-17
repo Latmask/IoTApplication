@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnON();
-//                    run("actuator_reasoner.py" + " " + 1 + " " + light.getActuatorID());
+//                    run("actuator_reasoner.py" + " " + "TurnOn" + " " + light.getActuatorID());
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned on");
                     speakText("Light " + light.getName() + " is now turned on");
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnOff();
-//                    run("actuator_reasoner.py" + " " + 2 + " " + light.getActuatorID());
+//                    run("actuator_reasoner.py" + " " + "TurnOff" + " " + light.getActuatorID());
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned off");
                     speakText("Light " + light.getName() + " is now turned off");
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnON();
-//                    run("actuator_reasoner.py" + " " + 1 + " " + lock.getActuatorID());
+//                    run("actuator_reasoner.py" + " " + "TurnOn" + " " + lock.getActuatorID());
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned on");
                     speakText("Lock " + lock.getName() + " is now turned on");
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnOff();
-//                    run("actuator_reasoner.py" + " " + 2 + " " + lock.getActuatorID());
+//                    run("actuator_reasoner.py" + " " + "TurnOff" + " " + lock.getActuatorID());
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned off");
                     speakText("Lock " + lock.getName() + " is now turned off");
@@ -262,10 +262,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //    public void sendToRun(Actuator actuator, Boolean onOff){
 //        if(onOff){
-//            run("actuator_reasoner.py" + " " + 2 + " " + actuator.getActuatorID());
+//            run("actuator_reasoner.py" + " " + "TurnOn" + " " + actuator.getActuatorID());
 //        }
 //        else {
-//            run("actuator_reasoner.py" + " " + 1 + " " + actuator.getActuatorID());
+//            run("actuator_reasoner.py" + " " + "TurnOff" + " " + actuator.getActuatorID());
 //        }
 //    }
 
