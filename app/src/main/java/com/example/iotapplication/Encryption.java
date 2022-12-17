@@ -82,7 +82,6 @@ public class Encryption implements Serializable {
                         .setKeyValidityStart(startDate)
                         .setKeyValidityEnd(endDate)
                         /*.setIsStrongBoxBacked(true)*/
-                        .setMaxUsageCount(60)
                         .build());
 
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -110,24 +109,38 @@ public class Encryption implements Serializable {
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                        .setMaxUsageCount(60)
                         .build());
-        SecretKey syncKey = keyGenerator.generateKey();
-        /*KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        syncKey = (SecretKey) keyStore.getKey("syncKey", null);
 
-        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        Light light1 = new Light("light one", "light 01", 0, false);
-
-        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
-        cipher.doFinal(data);
-        for(int i = 0; i > data.length; i++){
-            System.out.print(data[i] + " ");
-        }*/
-
+        //SecretKey syncKey = keyGenerator.generateKey();
 
     }
+    public byte[] AESEncryptionApplication(String password) throws InvalidKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+            KeyStore keyStore = new Encryption().GetKeyStore();
+            SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+
+            Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+
+            byte[] data = cipher.update(SerializationUtils.serialize((Serializable) password));
+            cipher.doFinal(data);
+            return data;
+
+        }
+
+    public String AESDecryption(byte[] encryptedPassword) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        KeyStore keyStore = new Encryption().GetKeyStore();
+        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, syncKey);
+
+        cipher.update(encryptedPassword);
+        byte[] data = cipher.doFinal(encryptedPassword);
+        String password = (String) SerializationUtils.deserialize(data);
+        return password;
+    }
+
     public void TimerSyncKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         KeyStore keystore = KeyStore.getInstance("AndroidKeystore");
         keystore.deleteEntry("syncKey");
@@ -173,9 +186,6 @@ public class Encryption implements Serializable {
         listOfLocks.add(lock4);
 
     }
-
-
-
 
 }
 
