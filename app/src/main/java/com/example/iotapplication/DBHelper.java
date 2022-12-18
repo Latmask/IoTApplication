@@ -6,6 +6,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DBNAME = "Login.db";
@@ -24,11 +38,18 @@ public class DBHelper extends SQLiteOpenHelper {
         myDB.execSQL("DROP TABLE IF EXISTS user");
     }
 
-    public Boolean insertData(String username, String password) {
+    public Boolean insertData(String username, String password) throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
         SQLiteDatabase myDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+
+        Encryption e = new Encryption();
+        e.AESEncryptionKeyGenerator();
+        byte[] encryptedPassword = e.AESEncryptionApplication(password);
+        String s = Base64.getEncoder().encodeToString(encryptedPassword);
+        e.DeleteKey();
+
         contentValues.put("username", username);
-        contentValues.put("password", password);
+        contentValues.put("password", s);
         long result = myDB.insert("user", null, contentValues);
         return result != -1;
     }

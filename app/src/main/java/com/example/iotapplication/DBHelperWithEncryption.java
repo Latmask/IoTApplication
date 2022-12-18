@@ -1,4 +1,4 @@
-package com.example.iotapplication;
+/*package com.example.iotapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -69,4 +69,4 @@ public class DBHelperWithEncryption extends SQLiteOpenHelper {
             return cursor.getCount() > 0;
         }
     }
-}
+}*/
