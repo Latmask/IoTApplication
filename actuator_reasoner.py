@@ -2,10 +2,10 @@
 # !/usr/bin/env python
 
 # This is where to insert your generated API keys (http://api.telldus.com/keys)
-pubkey = "ABCDEFGHIJKL123456789"  # Public Key
-privkey = "ABCDEFGHIJKL123456789"  # Private Key
-token = "ABCDEFGHIJKL123456789"  # Token
-secret = "ABCDEFGHIJKL123456789"  # Token Secret
+pubkey = "FEHUVEW84RAFR5SP22RABURUPHAFRUNU"  # Public Key
+privkey = "ZUXEVEGA9USTAZEWRETHAQUBUR69U6EF"  # Private Key
+token = "1212926ae3218029e19f76d4cadbb38c061bb1dec"  # Token
+secret = "2bdbdc217552a27012da93e9a4cd858d"  # Token Secret
 
 import requests, json, hashlib, uuid, time, sys
 
@@ -14,8 +14,8 @@ timestamp = str(time.mktime(localtime))
 nonce = uuid.uuid4().hex
 oauthSignature = (privkey + "%26" + secret)
 
-actuator_command = sys.argv[1]
-actuator_id = sys.argv[2]
+actuator_command = int(sys.argv[1])
+actuator_id = int(sys.argv[2])
 actuator_id_quotes = f'"{actuator_id}"'
 
 # GET-request

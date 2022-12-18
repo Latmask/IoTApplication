@@ -135,5 +135,4 @@
         app:srcCompat="@drawable/temperature"
         app:tint="@color/white"
         app:useCompatPadding="false" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
