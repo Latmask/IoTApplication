@@ -110,6 +110,7 @@ public class Encryption implements Serializable {
                         .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         .setMaxUsageCount(60)
+                        .setKeySize(256)
                         .build());
 
         //SecretKey syncKey = keyGenerator.generateKey();
@@ -163,28 +164,9 @@ public class Encryption implements Serializable {
 
     }
 
-    private void createActuatorsTest(){
-        Light light1 = new Light("light one", "light 01", 0, false);
-        Light light2 = new Light("light two", "light 02", 0, false);
-        Light light3 = new Light("light three", "light 03", 0, false);
-        Light light4 = new Light("light four", "light 04",0, false);
-
-        Lock lock1 = new Lock("lock one", "lock 01", 0,false);
-        Lock lock2 = new Lock("lock two", "lock 02", 0,false);
-        Lock lock3 = new Lock("lock three", "lock 03", 0,false);
-        Lock lock4 = new Lock("lock four", "lock 04", 0,false);
-
-
-        listOfLights.add(light1);
-        listOfLights.add(light2);
-        listOfLights.add(light3);
-        listOfLights.add(light4);
-
-        listOfLocks.add(lock1);
-        listOfLocks.add(lock2);
-        listOfLocks.add(lock3);
-        listOfLocks.add(lock4);
-
+    public void DeleteKey() throws KeyStoreException {
+        KeyStore keystore = KeyStore.getInstance("AndroidKeystore");
+        keystore.deleteEntry("syncKey");
     }
 
 }
