@@ -14,16 +14,15 @@ timestamp = str(time.mktime(localtime))
 nonce = uuid.uuid4().hex
 oauthSignature = (privkey + "%26" + secret)
 
-actuator_command = int(sys.argv[1])
-actuator_id = int(sys.argv[2])
-actuator_id_quotes = f'"{actuator_id}"'
+actuator_command = sys.argv[1]
+actuator_id = sys.argv[2]
 
 # GET-request
 if actuator_command == "TurnOn":
     response = requests.get(
         url="https://pa-api.telldus.com/json/device/turnOn",
         params={
-            "id": actuator_id_quotes,
+            "id": actuator_id,
         },
         headers={
             "Authorization": 'OAuth oauth_consumer_key="{pubkey}", oauth_nonce="{nonce}", oauth_signature="{oauthSignature}", oauth_signature_method="PLAINTEXT", oauth_timestamp="{timestamp}", oauth_token="{token}", oauth_version="1.0"'.format(
@@ -34,7 +33,7 @@ else:
     response = requests.get(
         url="https://pa-api.telldus.com/json/device/turnOff",
         params={
-            "id": actuator_id_quotes,
+            "id": actuator_id,
         },
         headers={
             "Authorization": 'OAuth oauth_consumer_key="{pubkey}", oauth_nonce="{nonce}", oauth_signature="{oauthSignature}", oauth_signature_method="PLAINTEXT", oauth_timestamp="{timestamp}", oauth_token="{token}", oauth_version="1.0"'.format(

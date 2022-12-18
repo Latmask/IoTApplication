@@ -27,7 +27,6 @@ import java.util.Locale;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -311,10 +310,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void sendToRun(Actuator actuator, String Command){
         if(Command == "TurnOn"){
-            run("actuator_reasoner.py" + " " + "TurnOn" + " " + actuator.getActuatorID());
+            run("python actuator_reasoner.py TurnOn " + actuator.getActuatorID());
         }
         else {
-            run("actuator_reasoner.py" + " " + "TurnOff" + " " + actuator.getActuatorID());
+            run("python actuator_reasoner.py TurnOff " + actuator.getActuatorID());
         }
     }
 
