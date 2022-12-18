@@ -145,12 +145,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void voiceLightReasoner(String spokenText){
-        if(spokenText.contains("turn on")){
+        if(spokenText.contains("all")) {
+            if (listOfLights.isEmpty()) {
+                speakText("Error: No devices of this type are connected with this application");
+                return;
+            } else if (spokenText.contains("turn on")) {
+                for (Light light : listOfLights) {
+                    light.turnON();
+                    sendToRun(light, "TurnOn");
+                }
+                saveData();
+                tvMessage.setText("All light are now turned on");
+                speakText("All light are now turned on");
+                return;
+            } else if (spokenText.contains("turn off")) {
+                for (Light light : listOfLights) {
+                    light.turnOff();
+                    sendToRun(light, "TurnOff");
+                }
+                saveData();
+                tvMessage.setText("All light are now turned off");
+                speakText("All light are now turned off");
+                return;
+            }
+        }
+        else if(spokenText.contains("turn on")){
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnON();
-//                    run("python turnondevice.py");
-                    run("python actuator_reasoner.py" + " " + 1 + " " + light.getActuatorID());
+                    sendToRun(light, "TurnOn");
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned on");
                     speakText("Light " + light.getName() + " is now turned on");
@@ -167,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnOff();
-                    run("python actuator_reasoner.py" + " " + 2 + " " + light.getActuatorID());
+                    sendToRun(light, "TurnOff");
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned off");
                     speakText("Light " + light.getName() + " is now turned off");
@@ -197,11 +220,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void voiceLockReasoner(String spokenText){
-        if(spokenText.contains("turn on")){
+        if(spokenText.contains("all")) {
+            if (listOfLocks.isEmpty()) {
+                speakText("Error: No devices of this type are connected with this application");
+                return;
+            } else if (spokenText.contains("turn on")) {
+                for (Lock lock : listOfLocks) {
+                    lock.turnON();
+                    sendToRun(lock, "TurnOn");
+                }
+                saveData();
+                tvMessage.setText("All locks are now turned on");
+                speakText("All locks are now turned on");
+                return;
+            } else if (spokenText.contains("turn off")) {
+                for (Lock lock : listOfLocks) {
+                    lock.turnOff();
+                    sendToRun(lock, "TurnOff");
+                }
+                saveData();
+                tvMessage.setText("All locks are now turned off");
+                speakText("All locks are now turned off");
+                return;
+            }
+        }
+        else if(spokenText.contains("turn on")){
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnON();
-//                    run("actuator_reasoner.py" + " " + 1 + " " + lock.getActuatorID());
+                    sendToRun(lock, "TurnOn");
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned on");
                     speakText("Lock " + lock.getName() + " is now turned on");
@@ -219,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnOff();
-//                    run("actuator_reasoner.py" + " " + 2 + " " + lock.getActuatorID());
+                    sendToRun(lock, "TurnOff");
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned off");
                     speakText("Lock " + lock.getName() + " is now turned off");
@@ -262,12 +309,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
-    public void sendToRun(Actuator actuator, Boolean onOff){
-        if(onOff){
-            run("actuator_reasoner.py" + " " + 2 + " " + actuator.getActuatorID());
+    public void sendToRun(Actuator actuator, String Command){
+        if(Command == "TurnOn"){
+            run("actuator_reasoner.py" + " " + "TurnOn" + " " + actuator.getActuatorID());
         }
         else {
-            run("actuator_reasoner.py" + " " + 1 + " " + actuator.getActuatorID());
+            run("actuator_reasoner.py" + " " + "TurnOff" + " " + actuator.getActuatorID());
         }
     }
 
@@ -302,9 +349,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Used for testing
     private void createActuatorsTest(){
         Light light1 = new Light("one", "01", 11885745, false);
-        Light light2 = new Light("two", "02", 0, false);
-        Light light3 = new Light("three", "03", 0, false);
-        Light light4 = new Light("four", "04",0, false);
+        Light light2 = new Light("two", "02", 11885745, false);
+        Light light3 = new Light("three", "03", 11885745, false);
+        Light light4 = new Light("four", "04",11885745, false);
 
         Lock lock1 = new Lock("one", "01", 0,false);
         Lock lock2 = new Lock("two", "02", 0,false);
