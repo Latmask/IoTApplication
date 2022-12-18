@@ -19,7 +19,7 @@ actuator_id = int(sys.argv[2])
 actuator_id_quotes = f'"{actuator_id}"'
 
 # GET-request
-if actuator_command < 2:
+if actuator_command == "TurnOn":
     response = requests.get(
         url="https://pa-api.telldus.com/json/device/turnOn",
         params={
