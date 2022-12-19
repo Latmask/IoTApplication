@@ -44,12 +44,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Encryption e = new Encryption();
         e.AESEncryptionKeyGenerator();
-        byte[] encryptedPassword = e.AESEncryptionApplication(password);
-        String s = Base64.getEncoder().encodeToString(encryptedPassword);
-        e.DeleteKey();
+        String encryptedPassword = e.AESEncryptionApplication(password);
+        //e.DeleteKey();
 
         contentValues.put("username", username);
-        contentValues.put("password", s);
+        contentValues.put("password", encryptedPassword);
         long result = myDB.insert("user", null, contentValues);
         return result != -1;
     }
@@ -61,14 +60,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] {username})) {
             return cursor.getCount() > 0;
         }
+
     }
 
-    public Boolean checkUsernamePassword(String username, String password) {
+    public Boolean checkUsernamePassword(String username, String enteredPassword){
         SQLiteDatabase myDB = this.getWritableDatabase();
+        Encryption e = new Encryption();
         try (Cursor cursor = myDB.rawQuery(
-                "SELECT * FROM user WHERE username = ? AND password = ?",
-                new String[]{username, password})) {
-            return cursor.getCount() > 0;
+                "SELECT * FROM user WHERE username = ?",
+                new String[]{username/*, password*/})) {
+            cursor.moveToFirst();
+            String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
+            String[] splitter = encryptedPassword.split(" ", 2);
+
+            String correctPassword = e.AESDecryption(splitter[0], splitter[1]);
+            if(correctPassword == enteredPassword){
+                return true;
+            }else{
+                return false;
+            }
+            //return cursor.getCount() > 0;
         }
     }
 }
