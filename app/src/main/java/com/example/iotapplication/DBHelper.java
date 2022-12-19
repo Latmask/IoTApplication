@@ -74,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String[] splitter = encryptedPassword.split(" ", 2);
 
             String correctPassword = e.AESDecryption(splitter[0], splitter[1]);
-            if(correctPassword == enteredPassword){
+            if(correctPassword.equals(enteredPassword)){
                 return true;
             }else{
                 return false;

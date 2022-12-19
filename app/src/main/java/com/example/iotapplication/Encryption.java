@@ -144,7 +144,7 @@ public class Encryption implements Serializable {
 
     }
 
-    public String AESDecryption(String encryptedPassword, String iv){
+    public String AESDecryption(String iv, String encryptedPassword){
         SecretKey syncKey = null;
         Cipher cipher = null;
         byte[] bytes = null;
