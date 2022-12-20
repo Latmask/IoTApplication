@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabLock.setOnClickListener(this);
         fabTemperature.setOnClickListener(this);
 
-        voiceReasoner = new VoiceReasoner();
+        voiceReasoner = new VoiceReasoner(this);
 
         textToSpeech = new TextToSpeech(this, this);
         loadData();
