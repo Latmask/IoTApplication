@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Light> listOfLights;
     private ArrayList<Lock> listOfLocks;
     private TextToSpeech textToSpeech;
-    private FloatingActionButton fabMicrophone, fabLight, fabLock, fabTemperature;
+    private FloatingActionButton fabMicrophone, fabLight, fabLock;
     private VoiceReasoner voiceReasoner;
 
     @Override
@@ -38,13 +38,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvMessage = findViewById(R.id.tvMessage);
         fabLight = findViewById(R.id.fabLight);
         fabLock = findViewById(R.id.fabLock);
-        fabTemperature = findViewById(R.id.fabTemperature);
         fabMicrophone = findViewById(R.id.fabMicrophone);
 
         fabLight.setOnClickListener(this);
         fabMicrophone.setOnClickListener(this);
         fabLock.setOnClickListener(this);
-        fabTemperature.setOnClickListener(this);
 
         voiceReasoner = new VoiceReasoner(this);
 
@@ -63,9 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case (R.id.fabLock):
                 changeActivity(LockActivity.class);
-                break;
-            case (R.id.fabTemperature):
-                changeActivity(TemperatureActivity.class);
                 break;
         }
     }
@@ -114,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
                         Intent data = result.getData();
+                        assert data != null;
                         List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                         String spokenTextInitial = results.get(0).toLowerCase();
                         String spokenText = spokenTextInitial.toLowerCase();

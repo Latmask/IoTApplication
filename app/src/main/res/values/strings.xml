@@ -14,4 +14,6 @@
     <string name="fab_lock">fabLock</string>
     <string name="fab_temperature">fabTemperature</string>
     <string name="fab_microphone">fabMicrophone</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 </resources>

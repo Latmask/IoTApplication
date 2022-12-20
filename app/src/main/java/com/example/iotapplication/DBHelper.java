@@ -29,13 +29,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase myDB) {
-        myDB.execSQL("CREATE TABLE user(username TEXT PRIMARY KEY, password TEXT)");
+    public void onCreate(SQLiteDatabase iotDB) {
+        iotDB.execSQL("CREATE TABLE user(username TEXT PRIMARY KEY, password TEXT)");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase myDB, int i, int i1) {
-        myDB.execSQL("DROP TABLE IF EXISTS user");
+    public void onUpgrade(SQLiteDatabase iotDB, int i, int i1) {
+        iotDB.execSQL("DROP TABLE IF EXISTS user");
     }
 
     public Boolean insertData(String username, String password) throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
@@ -54,8 +54,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Boolean checkUsername (String username) {
-        SQLiteDatabase myDB = this.getWritableDatabase();
-        try (Cursor cursor = myDB.rawQuery(
+        SQLiteDatabase iotDB = this.getWritableDatabase();
+        try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?",
                 new String[] {username})) {
             return cursor.getCount() > 0;
@@ -64,9 +64,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Boolean checkUsernamePassword(String username, String enteredPassword){
-        SQLiteDatabase myDB = this.getWritableDatabase();
+        SQLiteDatabase iotDB = this.getWritableDatabase();
         Encryption e = new Encryption();
-        try (Cursor cursor = myDB.rawQuery(
+        try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?",
                 new String[]{username/*, password*/})) {
             cursor.moveToFirst();
@@ -74,11 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String[] splitter = encryptedPassword.split(" ", 2);
 
             String correctPassword = e.AESDecryption(splitter[0], splitter[1]);
-            if(correctPassword.equals(enteredPassword)){
-                return true;
-            }else{
-                return false;
-            }
+            return correctPassword.equals(enteredPassword);
             //return cursor.getCount() > 0;
         }
     }
