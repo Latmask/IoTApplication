@@ -24,6 +24,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
@@ -44,28 +45,9 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
 
 public class Encryption implements Serializable {
-    private byte[] IV = null;
     private ArrayList<Light> listOfLights;
     private ArrayList<Lock> listOfLocks;
     private Date endDate = null;
-    public static void main(String args[]) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
-
-       new  Encryption().AESEncryptionKeyGenerator();
-
-
-        KeyStore keyStore = new Encryption().GetKeyStore();
-        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
-
-        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        Light light1 = new Light("light one", "light 01", 0, false);
-
-        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
-        cipher.doFinal(data);
-        for(int i = 0; i > data.length; i++){
-            System.out.print(data[i] + " ");
-        }
-    }
 
     public KeyStore GetKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -73,7 +55,7 @@ public class Encryption implements Serializable {
         return keyStore;
     }
 
-    public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+    public void RSAEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
 
         Calendar c = Calendar.getInstance();
@@ -92,15 +74,39 @@ public class Encryption implements Serializable {
                         .setKeyValidityEnd(endDate)
                         /*.setIsStrongBoxBacked(true)*/
                         .build());
+        keyPairGenerator.generateKeyPair();
+    }
+    public void RSAEncryption(String data){
+        KeyStore keyStore;
+        Signature signature;
+        PrivateKey privateKey = null;
+        byte[] byteData = null;
 
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        Signature signature = Signature.getInstance("SHA256withRSA/PSS");
+        try{
+            keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            privateKey = (PrivateKey) keyStore.getKey("asyncKey", null);
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
 
-        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        PrivateKey privateKey = (PrivateKey) keyStore.getKey("asyncKey", null);
-        PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
-        signature.initSign(privateKey);
+        //PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
+        try{
+            signature = Signature.getInstance("SHA256withRSA/PSS");
+            signature.initSign(privateKey);
+            byteData = data.getBytes(StandardCharsets.UTF_8);
+            signature.sign();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+
+
 
         /*String object = "example";
         try{
@@ -170,7 +176,6 @@ public class Encryption implements Serializable {
             e.printStackTrace();
         }
 
-        //cipher.update(encryptedPassword);
         byte[] stringBytes = Base64.getDecoder().decode(encryptedPassword);
         try{
             bytes = cipher.doFinal(stringBytes);
