@@ -2,10 +2,10 @@
 # !/usr/bin/env python
 
 # This is where to insert your generated API keys (http://api.telldus.com/keys)
-pubkey = "ABCDEFGHIJKL123456789"  # Public Key
-privkey = "ABCDEFGHIJKL123456789"  # Private Key
-token = "ABCDEFGHIJKL123456789"  # Token
-secret = "ABCDEFGHIJKL123456789"  # Token Secret
+pubkey = "FEHUVEW84RAFR5SP22RABURUPHAFRUNU"  # Public Key
+privkey = "ZUXEVEGA9USTAZEWRETHAQUBUR69U6EF"  # Private Key
+token = "1212926ae3218029e19f76d4cadbb38c061bb1dec"  # Token
+secret = "2bdbdc217552a27012da93e9a4cd858d"  # Token Secret
 
 import requests, json, hashlib, uuid, time, sys
 
@@ -16,14 +16,13 @@ oauthSignature = (privkey + "%26" + secret)
 
 actuator_command = sys.argv[1]
 actuator_id = sys.argv[2]
-actuator_id_quotes = f'"{actuator_id}"'
 
 # GET-request
 if actuator_command == "TurnOn":
     response = requests.get(
         url="https://pa-api.telldus.com/json/device/turnOn",
         params={
-            "id": actuator_id_quotes,
+            "id": actuator_id,
         },
         headers={
             "Authorization": 'OAuth oauth_consumer_key="{pubkey}", oauth_nonce="{nonce}", oauth_signature="{oauthSignature}", oauth_signature_method="PLAINTEXT", oauth_timestamp="{timestamp}", oauth_token="{token}", oauth_version="1.0"'.format(
@@ -34,7 +33,7 @@ else:
     response = requests.get(
         url="https://pa-api.telldus.com/json/device/turnOff",
         params={
-            "id": actuator_id_quotes,
+            "id": actuator_id,
         },
         headers={
             "Authorization": 'OAuth oauth_consumer_key="{pubkey}", oauth_nonce="{nonce}", oauth_signature="{oauthSignature}", oauth_signature_method="PLAINTEXT", oauth_timestamp="{timestamp}", oauth_token="{token}", oauth_version="1.0"'.format(

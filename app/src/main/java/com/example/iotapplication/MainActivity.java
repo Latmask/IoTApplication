@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
@@ -18,14 +19,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-//import ch.ethz.ssh2.Connection;
-//import ch.ethz.ssh2.Session;
-//import ch.ethz.ssh2.StreamGobbler;
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.Session;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         textToSpeech = new TextToSpeech(this, this);
         loadData();
-
     }
 
     public void onClick(View v) {
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void displaySpeechRecognizer() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-// This starts the activity and populates the intent with the speech text.
+    // This starts the activity and populates the intent with the speech text.
         someActivityResultLauncher.launch(intent);
     }
 
@@ -144,11 +144,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void voiceLightReasoner(String spokenText){
-        if(spokenText.contains("turn on")){
+        if(spokenText.contains("all")) {
+            if (listOfLights.isEmpty()) {
+                speakText("Error: No devices of this type are connected with this application");
+                return;
+            } else if (spokenText.contains("turn on")) {
+                for (Light light : listOfLights) {
+                    light.turnON();
+                    sendToRun(light, "TurnOn");
+                }
+                saveData();
+                tvMessage.setText("All light are now turned on");
+                speakText("All light are now turned on");
+                return;
+            } else if (spokenText.contains("turn off")) {
+                for (Light light : listOfLights) {
+                    light.turnOff();
+                    sendToRun(light, "TurnOff");
+                }
+                saveData();
+                tvMessage.setText("All light are now turned off");
+                speakText("All light are now turned off");
+                return;
+            }
+        }
+        else if(spokenText.contains("turn on")){
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnON();
-//                    run("actuator_reasoner.py" + " " + "TurnOn" + " " + light.getActuatorID());
+                    sendToRun(light, "TurnOn");
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned on");
                     speakText("Light " + light.getName() + " is now turned on");
@@ -165,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Light light : listOfLights){
                 if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
                     light.turnOff();
-//                    run("actuator_reasoner.py" + " " + "TurnOff" + " " + light.getActuatorID());
+                    sendToRun(light, "TurnOff");
                     saveData();
                     tvMessage.setText("Light " + light.getName() + " is now turned off");
                     speakText("Light " + light.getName() + " is now turned off");
@@ -195,11 +219,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void voiceLockReasoner(String spokenText){
-        if(spokenText.contains("turn on")){
+        if(spokenText.contains("all")) {
+            if (listOfLocks.isEmpty()) {
+                speakText("Error: No devices of this type are connected with this application");
+                return;
+            } else if (spokenText.contains("turn on")) {
+                for (Lock lock : listOfLocks) {
+                    lock.turnON();
+                    sendToRun(lock, "TurnOn");
+                }
+                saveData();
+                tvMessage.setText("All locks are now turned on");
+                speakText("All locks are now turned on");
+                return;
+            } else if (spokenText.contains("turn off")) {
+                for (Lock lock : listOfLocks) {
+                    lock.turnOff();
+                    sendToRun(lock, "TurnOff");
+                }
+                saveData();
+                tvMessage.setText("All locks are now turned off");
+                speakText("All locks are now turned off");
+                return;
+            }
+        }
+        else if(spokenText.contains("turn on")){
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnON();
-//                    run("actuator_reasoner.py" + " " + "TurnOn" + " " + lock.getActuatorID());
+                    sendToRun(lock, "TurnOn");
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned on");
                     speakText("Lock " + lock.getName() + " is now turned on");
@@ -217,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(Lock lock : listOfLocks){
                 if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
                     lock.turnOff();
-//                    run("actuator_reasoner.py" + " " + "TurnOff" + " " + lock.getActuatorID());
+                    sendToRun(lock, "TurnOff");
                     saveData();
                     tvMessage.setText("Lock " + lock.getName() + " is now turned off");
                     speakText("Lock " + lock.getName() + " is now turned off");
@@ -260,49 +308,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
-//    public void sendToRun(Actuator actuator, Boolean onOff){
-//        if(onOff){
-//            run("actuator_reasoner.py" + " " + "TurnOn" + " " + actuator.getActuatorID());
-//        }
-//        else {
-//            run("actuator_reasoner.py" + " " + "TurnOff" + " " + actuator.getActuatorID());
-//        }
-//    }
+    public void sendToRun(Actuator actuator, String Command){
+        if(Command == "TurnOn"){
+            run("python actuator_reasoner.py TurnOn " + actuator.getActuatorID());
+        }
+        else {
+            run("python actuator_reasoner.py TurnOff " + actuator.getActuatorID());
+        }
+    }
 
     //Taken from lab2, should work as it is
-//    public void run(String command) {
-//        String hostname = "130.237.177.207";
-//        String username = "pi";
-//        String password = "IoT@2021";
-//
-//        StrictMode.ThreadPolicy policy = new
-//                StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//
-//        try {
-//            Connection conn = new Connection(hostname); //init connection
-//            conn.connect(); //start connection to the hostname
-//            boolean isAuthenticated = conn.authenticateWithPassword(username,
-//                    password);
-//            if (isAuthenticated == false)
-//                throw new IOException("Authentication failed.");
-//            Session sess = conn.openSession();
-//            sess.execCommand(command);
-//            System.out.println("ExitCode: " + sess.getExitStatus());
-//            sess.close(); // Close this session
-//            conn.close();
-//        } catch (IOException e) {
-//            e.printStackTrace(System.err);
-//            System.exit(2);
-//        }
-//    }
+    public void run(String command) {
+        String hostname = "192.168.0.37";
+        String username = "pi";
+        String password = "IoT@2021";
+
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            Connection conn = new Connection(hostname); //init connection
+            conn.connect(); //start connection to the hostname
+            boolean isAuthenticated = conn.authenticateWithPassword(username,
+                    password);
+            if (isAuthenticated == false)
+                throw new IOException("Authentication failed.");
+            Session sess = conn.openSession();
+            sess.execCommand(command);
+            System.out.println("ExitCode: " + sess.getExitStatus());
+            sess.close(); // Close this session
+            conn.close();
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+            System.exit(2);
+        }
+    }
 
     //Used for testing
     private void createActuatorsTest(){
-        Light light1 = new Light("one", "01", 0, false);
-        Light light2 = new Light("two", "02", 0, false);
-        Light light3 = new Light("three", "03", 0, false);
-        Light light4 = new Light("four", "04",0, false);
+        Light light1 = new Light("one", "01", 11885745, false);
+        Light light2 = new Light("two", "02", 11885745, false);
+        Light light3 = new Light("three", "03", 11885745, false);
+        Light light4 = new Light("four", "04",11885745, false);
 
         Lock lock1 = new Lock("one", "01", 0,false);
         Lock lock2 = new Lock("two", "02", 0,false);
