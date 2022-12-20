@@ -9,6 +9,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etUsername, etPassword, etRePassword;
@@ -29,10 +42,34 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister = findViewById(R.id.bRegister);
 
         bRegister.setOnClickListener(view -> {
-            if(registerIsValid()){
-                toastMessageShort("Registered successfully");
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
+            try {
+                if(registerIsValid()){
+                    toastMessageShort("Registered successfully");
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            } catch (InvalidAlgorithmParameterException e) {
+                e.printStackTrace();
+            } catch (UnrecoverableKeyException e) {
+                e.printStackTrace();
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+            } catch (NoSuchProviderException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
             }
         });
 
@@ -42,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private boolean registerIsValid() {
+    private boolean registerIsValid() throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String rePassword = etRePassword.getText().toString();
