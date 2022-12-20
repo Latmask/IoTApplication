@@ -7,7 +7,7 @@ public class VoiceReasoner {
     private MainActivity mainActivity;
     private CommandsToActuator commandsToActuator = new CommandsToActuator();
 
-    public VoiceReasoner() {
+    public VoiceReasoner(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
