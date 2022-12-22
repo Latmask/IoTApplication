@@ -16,4 +16,5 @@
     <string name="fab_microphone">fabMicrophone</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="light_status">lightStatus</string>
 </resources>
