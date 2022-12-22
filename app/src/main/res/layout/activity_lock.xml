@@ -11,18 +11,16 @@
         android:id="@+id/ibBackArrowLock"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="494dp"
-        android:layout_marginEnd="325dp"
-        android:layout_marginBottom="73dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="318dp"
+        android:layout_marginBottom="60dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/backarrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle2"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewLock"
         app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
 
     <TextView
@@ -39,4 +37,15 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewLock"
+        android:layout_width="394dp"
+        android:layout_height="440dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="7dp"
+        app:layout_constraintBottom_toTopOf="@+id/ibBackArrowLock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
