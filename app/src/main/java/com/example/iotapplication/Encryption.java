@@ -80,33 +80,29 @@ public class Encryption implements Serializable {
         KeyStore keyStore;
         Signature signature;
         PrivateKey privateKey = null;
-        byte[] byteData = null;
+        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
 
         try{
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             privateKey = (PrivateKey) keyStore.getKey("asyncKey", null);
+
+            signature = Signature.getInstance("SHA256withRSA/PSS");
+            signature.initSign(privateKey);
+            signature.update(byteData);
+            signature.sign();
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
 
         //PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
-        try{
-            signature = Signature.getInstance("SHA256withRSA/PSS");
-            signature.initSign(privateKey);
-            byteData = data.getBytes(StandardCharsets.UTF_8);
-            signature.sign();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }
-
-
+        
 
         /*String object = "example";
         try{
