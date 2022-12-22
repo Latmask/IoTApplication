@@ -67,8 +67,6 @@ public class RegisterActivity extends AppCompatActivity {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String rePassword = etRePassword.getText().toString();
-        Boolean userExists = DB.checkUsername(username);
-        Boolean userCreated = DB.insertData(username, password);
 
         if (username.equals("") || password.equals("") || rePassword.equals("")) {
             Toast.makeText(RegisterActivity.this, "Please enter all the fields", Toast.LENGTH_LONG)
@@ -79,10 +77,14 @@ public class RegisterActivity extends AppCompatActivity {
             toastMessageShort("Passwords not matching");
             return false;
         }
+
+        Boolean userExists = DB.checkUsername(username);
         if (userExists) {
             toastMessageShort("User already exists");
             return false;
         }
+
+        Boolean userCreated = DB.insertLoginData(username, password);
         if (!userCreated) {
             toastMessageShort("Registration failed");
             return false;

@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -29,11 +28,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextToSpeech textToSpeech;
     private FloatingActionButton fabMicrophone, fabLight, fabLock;
     private VoiceReasoner voiceReasoner;
+    DBHelper iotDB;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        username = User.getName();
+        iotDB = new DBHelper(this);
 
         tvMessage = findViewById(R.id.tvMessage);
         fabLight = findViewById(R.id.fabLight);
@@ -66,27 +70,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(listOfLights);
-        String json2 = gson.toJson(listOfLocks);
-        editor.putString("light list", json);
-        editor.putString("lock list", json2);
-        editor.apply();
+        String lightData = gson.toJson(listOfLights);
+        String lockData = gson.toJson(listOfLocks);
+        iotDB.updateActuatorData(username, "light_data", lightData);
+        iotDB.updateActuatorData(username, "lock_data", lockData);
     }
 
     private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("light list", null);
-        String json2 = sharedPreferences.getString("lock list", null);
-        Type type = new TypeToken<ArrayList<Light>>() {}.getType();
-        Type type2 = new TypeToken<ArrayList<Lock>>() {}.getType();
-        listOfLights = gson.fromJson(json, type);
-        listOfLocks = gson.fromJson(json2, type2);
+        String lightData = iotDB.getLightData(username);
+        String lockData = iotDB.getLockData(username);
+        Type light = new TypeToken<ArrayList<Light>>() {}.getType();
+        Type lock = new TypeToken<ArrayList<Lock>>() {}.getType();
+        listOfLights = gson.fromJson(lightData, light);
+        listOfLocks = gson.fromJson(lockData, lock);
 
-        if (listOfLights == null && listOfLocks == null) {
+        if (listOfLights == null || listOfLocks == null) {
             listOfLights = new ArrayList<>();
             listOfLocks = new ArrayList<>();
             createActuatorsTest();
@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listOfLocks.add(lock2);
         listOfLocks.add(lock3);
         listOfLocks.add(lock4);
+        saveData();
     }
 
     public void changeActivity(Class<? extends Activity> destinationActivity) {
