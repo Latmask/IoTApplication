@@ -1,5 +1,7 @@
 package com.example.iotapplication;
 
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+
 import java.util.ArrayList;
 
 public class VoiceReasoner {
@@ -55,7 +57,7 @@ public class VoiceReasoner {
         }
         else if(spokenText.contains("turn on")){
             for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+                if(containsIgnoreCase(spokenText, light.getName()) || containsIgnoreCase(spokenText, light.getNumName())){
                     if(light.getStatus()){
                         mainActivity.setTvMessage("Light " + light.getName() + " is already turned on");
                         mainActivity.speakText("Light " + light.getName() + " is already turned on");
@@ -73,12 +75,11 @@ public class VoiceReasoner {
                     mainActivity.setTvMessage("No such light");
                     mainActivity.speakText("No such device is connected with this application");
                 }
-
             }
         }
         else if(spokenText.contains("turn off")){
             for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+                if(containsIgnoreCase(spokenText, light.getName()) || containsIgnoreCase(spokenText, light.getNumName())){
                     if(!light.getStatus()){
                         mainActivity.setTvMessage("Light " + light.getName() + " is already turned off");
                         mainActivity.speakText("Light " + light.getName() + " is already turned off");
@@ -100,7 +101,7 @@ public class VoiceReasoner {
         }
         else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Light light : listOfLights){
-                if(spokenText.contains(light.getName()) || spokenText.contains(light.getNumName())){
+                if(containsIgnoreCase(spokenText, light.getName()) || containsIgnoreCase(spokenText, light.getNumName())){
                     if(light.getStatus()){
                         mainActivity.setTvMessage("Light " + light.getName() + " is turned on");
                         mainActivity.speakText("Light " + light.getName() + " is turned on");
@@ -141,7 +142,7 @@ public class VoiceReasoner {
         }
         else if(spokenText.contains("turn on")){
             for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                if(containsIgnoreCase(spokenText, lock.getName()) || containsIgnoreCase(spokenText, lock.getNumName())){
                     if(lock.getStatus()){
                         mainActivity.setTvMessage("Lock " + lock.getName() + " is already turned on");
                         mainActivity.speakText("Lock " + lock.getName() + " is already turned on");
@@ -163,7 +164,7 @@ public class VoiceReasoner {
         }
         else if(spokenText.contains("turn off")){
             for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                if(containsIgnoreCase(spokenText, lock.getName()) || containsIgnoreCase(spokenText, lock.getNumName())){
                     if(!lock.getStatus()){
                         mainActivity.setTvMessage("Lock " + lock.getName() + " is already turned off");
                         mainActivity.speakText("Lock " + lock.getName() + " is already turned off");
@@ -185,7 +186,7 @@ public class VoiceReasoner {
         }
         else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Lock lock : listOfLocks){
-                if(spokenText.contains(lock.getName()) || spokenText.contains(lock.getNumName())){
+                if(containsIgnoreCase(spokenText, lock.getName()) || containsIgnoreCase(spokenText, lock.getNumName())){
                     if(lock.getStatus()){
                         mainActivity.setTvMessage("Lock " + lock.getName() + " is turned on");
                         mainActivity.speakText("Lock " + lock.getName() + " is turned on");
