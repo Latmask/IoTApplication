@@ -44,7 +44,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import java.security.SecureRandom;
 
-public class Encryption implements Serializable {
+public class Encryption{
     private ArrayList<Light> listOfLights;
     private ArrayList<Lock> listOfLocks;
     private Date endDate = null;
@@ -102,7 +102,7 @@ public class Encryption implements Serializable {
         }
 
         //PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
-        
+
 
         /*String object = "example";
         try{
@@ -112,11 +112,11 @@ public class Encryption implements Serializable {
         }*/
     }
 
-    public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public void AESEncryptionKeyGenerator(String username) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
-                new KeyGenParameterSpec.Builder("syncKey",
+                new KeyGenParameterSpec.Builder("syncKey" + username,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
@@ -127,10 +127,10 @@ public class Encryption implements Serializable {
         keyGenerator.generateKey();
 
     }
-    public String AESEncryptionApplication(String password) throws InvalidKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    public String AESEncryptionApplication(String password, String username) throws InvalidKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyStore keyStore =  KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
-        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
         cipher.init(Cipher.ENCRYPT_MODE, syncKey);
@@ -146,7 +146,7 @@ public class Encryption implements Serializable {
 
     }
 
-    public String AESDecryption(String iv, String encryptedPassword){
+    public String AESDecryption(String iv, String encryptedPassword, String username){
         SecretKey syncKey = null;
         Cipher cipher = null;
         byte[] bytes = null;
@@ -154,7 +154,7 @@ public class Encryption implements Serializable {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
-            syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+            syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
         }catch(KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException ex){
             ex.printStackTrace();
         } catch (UnrecoverableKeyException e) {

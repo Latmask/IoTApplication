@@ -43,9 +43,8 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
 
         Encryption e = new Encryption();
-        e.AESEncryptionKeyGenerator();
-        String encryptedPassword = e.AESEncryptionApplication(password);
-        //e.DeleteKey();
+        e.AESEncryptionKeyGenerator(username);
+        String encryptedPassword = e.AESEncryptionApplication(password, username);
 
         contentValues.put("username", username);
         contentValues.put("password", encryptedPassword);
@@ -73,7 +72,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
             String[] splitter = encryptedPassword.split(" ", 2);
 
-            String correctPassword = e.AESDecryption(splitter[0], splitter[1]);
+            String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
             if(correctPassword.equals(enteredPassword)){
                 return true;
             }else{
