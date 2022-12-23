@@ -17,4 +17,9 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="light_status">lightStatus</string>
+    <string name="change_name">Change Name</string>
+    <string name="confirm">Confirm</string>
+    <string name="old_name">Old Name:</string>
+    <string name="new_name">New Name:</string>
+    <string name="name">Name</string>
 </resources>

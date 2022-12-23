@@ -41,16 +41,16 @@ public class VoiceReasoner {
                     commandsToActuator.sendToRun(light, "TurnOn");
                 }
                 mainActivity.saveData();
-                mainActivity.setTvMessage("All light are now turned on");
-                mainActivity.speakText("All light are now turned on");
+                mainActivity.setTvMessage("All lights are now turned on");
+                mainActivity.speakText("All lights are now turned on");
             } else if (spokenText.contains("turn off")) {
                 for (Light light : listOfLights) {
                     light.turnOff();
                     commandsToActuator.sendToRun(light, "TurnOff");
                 }
                 mainActivity.saveData();
-                mainActivity.setTvMessage("All light are now turned off");
-                mainActivity.speakText("All light are now turned off");
+                mainActivity.setTvMessage("All lights are now turned off");
+                mainActivity.speakText("All lights are now turned off");
             }
         }
         else if(spokenText.contains("turn on")){
