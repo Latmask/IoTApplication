@@ -13,6 +13,8 @@ public abstract class Actuator {
         this.status = status;
     }
 
+    public void setName(String name) { this.name = name;}
+
     public String getName(){
         return name;
     }
