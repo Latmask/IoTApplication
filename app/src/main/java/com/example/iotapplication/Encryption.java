@@ -123,8 +123,7 @@ public class Encryption{
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                         //.setMaxUsageCount(10)
-                        //.setIsStrongBoxBacked(true)
-                        //.setKeySize(256)
+                        .setKeySize(128)
                         .build());
 
         keyGenerator.generateKey();
