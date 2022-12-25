@@ -122,7 +122,7 @@ public class Encryption{
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                        .setMaxUsageCount(10)
+                        //.setMaxUsageCount(10)
                         //.setIsStrongBoxBacked(true)
                         //.setKeySize(256)
                         .build());
@@ -212,11 +212,11 @@ public class Encryption{
             e.printStackTrace();
         }
         String password = new String(bytes, StandardCharsets.UTF_8);
-        if(CheckIfKeyUsageDepleted(username)){
+        /*if(CheckIfKeyUsageDepleted(username)){
             DeleteKey(username);
             //AESEncryptionKeyGenerator(username);
 
-        }
+        }*/
         return password;
     }
 
