@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -112,7 +113,8 @@ public class Encryption{
         }*/
     }
 
-    public void AESEncryptionKeyGenerator(String username) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public void AESEncryptionKeyGenerator(String username){
+        try{
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
@@ -120,30 +122,59 @@ public class Encryption{
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                        .setMaxUsageCount(2)
+                        .setMaxUsageCount(10)
+                        //.setIsStrongBoxBacked(true)
                         //.setKeySize(256)
                         .build());
 
         keyGenerator.generateKey();
-
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
     }
-    public String AESEncryptionApplication(String password, String username) throws InvalidKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyStore keyStore =  KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
+    public String AESEncryptionApplication(String password, String username) {
+        try{
+            KeyStore keyStore =  KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        byte[] IV = cipher.getIV();
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+            byte[] IV = cipher.getIV();
 
-        byte[] data = password.getBytes("UTF-8");
-        byte[] finalData = cipher.doFinal(data);
-        String encryptedPassword = Base64.getEncoder().encodeToString(finalData);
-        String iv = Base64.getEncoder().encodeToString(IV);
-        String finalString = iv + " " + encryptedPassword;
+            byte[] data = password.getBytes("UTF-8");
+            byte[] finalData = cipher.doFinal(data);
+            String encryptedPassword = Base64.getEncoder().encodeToString(finalData);
+            String iv = Base64.getEncoder().encodeToString(IV);
+            String finalString = iv + " " + encryptedPassword;
+            return finalString;
 
-        return finalString;
-
+        }catch(IllegalArgumentException | KeyStoreException e){
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String AESDecryption(String iv, String encryptedPassword, String username){
@@ -183,7 +214,7 @@ public class Encryption{
         String password = new String(bytes, StandardCharsets.UTF_8);
         if(CheckIfKeyUsageDepleted(username)){
             DeleteKey(username);
-            AESEncryptionKeyGenerator(username);
+            //AESEncryptionKeyGenerator(username);
 
         }
         return password;

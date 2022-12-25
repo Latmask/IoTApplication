@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDB.execSQL("DROP TABLE IF EXISTS user");
     }
 
-    public Boolean insertData(String username, String password) throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
+    public Boolean insertData(String username, String password) {
         SQLiteDatabase myDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         /*String[] usernameArray = new String[]{username};
         myDB.delete("user", "username = ?", usernameArray);*/
 
-        
+
 
         contentValues.put("username", username);
         contentValues.put("password", encryptedPassword);

@@ -42,34 +42,10 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister = findViewById(R.id.bRegister);
 
         bRegister.setOnClickListener(view -> {
-            try {
-                if(registerIsValid()){
-                    toastMessageShort("Registered successfully");
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
-                }
-            } catch (InvalidAlgorithmParameterException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (NoSuchProviderException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
+            if(registerIsValid()){
+                toastMessageShort("Registered successfully");
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -79,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private boolean registerIsValid() throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
+    private boolean registerIsValid() {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String rePassword = etRePassword.getText().toString();
