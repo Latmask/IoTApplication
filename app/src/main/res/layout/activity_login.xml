@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_three"
+    android:background="@drawable/background"
     tools:context=".LoginActivity">
 
     <Button
@@ -34,7 +34,7 @@
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="18dp"
         android:autofillHints=""
-        android:background="#35ffffff"
+        android:background="#45ffffff"
         android:drawableStart="@drawable/ic_baseline_person_outline_24"
         android:drawablePadding="10dp"
         android:ems="10"
@@ -59,7 +59,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="44dp"
         android:autofillHints=""
-        android:background="#35ffffff"
+        android:background="#45ffffff"
         android:drawableStart="@drawable/ic_baseline_password_24"
         android:drawablePadding="10dp"
         android:ems="10"

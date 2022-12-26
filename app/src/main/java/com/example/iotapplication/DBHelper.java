@@ -6,12 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,16 +22,16 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase myDB) {
-        myDB.execSQL("CREATE TABLE user(username TEXT PRIMARY KEY, password TEXT)");
+    public void onCreate(SQLiteDatabase iotDB) {
+        iotDB.execSQL("CREATE TABLE user(username TEXT, password TEXT, light_data TEXT, lock_data TEXT)");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase myDB, int i, int i1) {
-        myDB.execSQL("DROP TABLE IF EXISTS user");
+    public void onUpgrade(SQLiteDatabase iotDB, int i, int i1) {
+        iotDB.execSQL("DROP TABLE IF EXISTS user");
     }
 
-    public Boolean insertData(String username, String password) {
+    public Boolean insertLoginData(String username, String password){
         SQLiteDatabase myDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -56,20 +50,56 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public Boolean updateActuatorData(String username, String colName, String lightData) {
+        SQLiteDatabase iotDB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(colName, lightData);
+
+        iotDB.update("user", contentValues, "username = ?", new String[] {username} );
+        return true;
+    }
+
+    public String getLightData(String username) {
+        SQLiteDatabase iotDB = this.getReadableDatabase();
+        String result = null;
+        try (Cursor cursor = iotDB.rawQuery(
+                    "SELECT light_data FROM user WHERE username = ?",
+                    new String[] {username})) {
+            if (cursor.moveToFirst()) {
+                result = cursor.getString(0);
+            }
+            cursor.close();
+            return result;
+        }
+    }
+
+    public String getLockData(String username) {
+        SQLiteDatabase iotDB = this.getReadableDatabase();
+        String result = null;
+        try (Cursor cursor = iotDB.rawQuery(
+                "SELECT lock_data FROM user WHERE username = ?",
+                new String[] {username})) {
+            if (cursor.moveToFirst()) {
+                result = cursor.getString(0);
+            }
+            cursor.close();
+            return result;
+        }
+    }
+
     public Boolean checkUsername (String username) {
-        SQLiteDatabase myDB = this.getWritableDatabase();
-        try (Cursor cursor = myDB.rawQuery(
+        SQLiteDatabase iotDB = this.getWritableDatabase();
+        try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?",
                 new String[] {username})) {
             return cursor.getCount() > 0;
         }
-
     }
 
     public Boolean checkUsernamePassword(String username, String enteredPassword){
-        SQLiteDatabase myDB = this.getWritableDatabase();
+        SQLiteDatabase iotDB = this.getWritableDatabase();
         Encryption e = new Encryption();
-        try (Cursor cursor = myDB.rawQuery(
+        try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?",
                 new String[]{username})) {
             cursor.moveToFirst();
@@ -79,15 +109,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
             if(e.CheckIfKeyUsageDepleted(username)){
-                this.insertData(username, enteredPassword);
+                this.insertLoginData(username, enteredPassword);
             }
 
-
-            if(correctPassword.equals(enteredPassword)){
-                return true;
-            }else{
-                return false;
-            }
+            cursor.close();
+            return correctPassword.equals(enteredPassword);
+            //return cursor.getCount() > 0;
         }
     }
 
