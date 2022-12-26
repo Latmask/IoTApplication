@@ -122,7 +122,7 @@ public class Encryption{
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                        //.setMaxUsageCount(10)
+                        .setMaxUsageCount(2)
                         .setKeySize(128)
                         .build());
 
