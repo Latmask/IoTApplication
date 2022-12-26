@@ -6,18 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -37,18 +31,22 @@ public class DBHelper extends SQLiteOpenHelper {
         iotDB.execSQL("DROP TABLE IF EXISTS user");
     }
 
-    public Boolean insertLoginData(String username, String password) throws InvalidAlgorithmParameterException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
+    public Boolean insertLoginData(String username, String password){
         SQLiteDatabase myDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         Encryption e = new Encryption();
-        e.AESEncryptionKeyGenerator();
-        String encryptedPassword = e.AESEncryptionApplication(password);
-        //e.DeleteKey();
+        e.AESEncryptionKeyGenerator(username);
+        String encryptedPassword = e.AESEncryptionApplication(password, username);
+
+        /*String[] usernameArray = new String[]{username};
+        myDB.delete("user", "username = ?", usernameArray);*/
+
 
         contentValues.put("username", username);
         contentValues.put("password", encryptedPassword);
         long result = myDB.insert("user", null, contentValues);
+
         return result != -1;
     }
 
@@ -103,15 +101,21 @@ public class DBHelper extends SQLiteOpenHelper {
         Encryption e = new Encryption();
         try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?",
-                new String[]{username/*, password*/})) {
+                new String[]{username})) {
             cursor.moveToFirst();
             String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
             String[] splitter = encryptedPassword.split(" ", 2);
+            String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
 
-            String correctPassword = e.AESDecryption(splitter[0], splitter[1]);
+
+            if(e.CheckIfKeyUsageDepleted(username)){
+                this.insertLoginData(username, enteredPassword);
+            }
+
             cursor.close();
             return correctPassword.equals(enteredPassword);
             //return cursor.getCount() > 0;
         }
     }
+
 }

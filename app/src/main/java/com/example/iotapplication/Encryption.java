@@ -4,12 +4,11 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -24,8 +23,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -43,29 +47,8 @@ import javax.crypto.spec.IvParameterSpec;
 
 import java.security.SecureRandom;
 
-public class Encryption implements Serializable {
-    private byte[] IV = null;
-    private ArrayList<Light> listOfLights;
-    private ArrayList<Lock> listOfLocks;
+public class Encryption{
     private Date endDate = null;
-    public static void main(String args[]) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
-
-       new  Encryption().AESEncryptionKeyGenerator();
-
-
-        KeyStore keyStore = new Encryption().GetKeyStore();
-        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
-
-        Cipher cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        Light light1 = new Light("light one", "light 01", 0, false);
-
-        byte [] data = cipher.update(SerializationUtils.serialize((Serializable) light1));
-        cipher.doFinal(data);
-        for(int i = 0; i > data.length; i++){
-            System.out.print(data[i] + " ");
-        }
-    }
 
     public KeyStore GetKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -73,7 +56,7 @@ public class Encryption implements Serializable {
         return keyStore;
     }
 
-    public void PublicKeyEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+    public void RSAEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
         Date startDate = new Date();
 
         Calendar c = Calendar.getInstance();
@@ -92,15 +75,35 @@ public class Encryption implements Serializable {
                         .setKeyValidityEnd(endDate)
                         /*.setIsStrongBoxBacked(true)*/
                         .build());
+        keyPairGenerator.generateKeyPair();
+    }
+    public void RSAEncryption(String data){
+        KeyStore keyStore;
+        Signature signature;
+        PrivateKey privateKey = null;
+        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
 
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        Signature signature = Signature.getInstance("SHA256withRSA/PSS");
+        try{
+            keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            privateKey = (PrivateKey) keyStore.getKey("asyncKey", null);
 
-        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        PrivateKey privateKey = (PrivateKey) keyStore.getKey("asyncKey", null);
-        PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
-        signature.initSign(privateKey);
+            signature = Signature.getInstance("SHA256withRSA/PSS");
+            signature.initSign(privateKey);
+            signature.update(byteData);
+            signature.sign();
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
+        //PublicKey publicKey = keyStore.getCertificate("asyncKey").getPublicKey();
+
 
         /*String object = "example";
         try{
@@ -110,77 +113,139 @@ public class Encryption implements Serializable {
         }*/
     }
 
-    public void AESEncryptionKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableKeyException, CertificateException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public void AESEncryptionKeyGenerator(String username){
+        try{
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
         keyGenerator.init(
-                new KeyGenParameterSpec.Builder("syncKey",
+                new KeyGenParameterSpec.Builder("syncKey" + username,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                        //.setMaxUsageCount(60)
-                        //.setKeySize(256)
+                        //.setMaxUsageCount(10)
+                        .setKeySize(128)
                         .build());
 
         keyGenerator.generateKey();
-
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
     }
-    public String AESEncryptionApplication(String password) throws InvalidKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyStore keyStore =  KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey", null);
+    public String AESEncryptionApplication(String password, String username) {
+        try{
+            KeyStore keyStore =  KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            SecretKey syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, syncKey);
-        byte[] IV = cipher.getIV();
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, syncKey);
+            byte[] IV = cipher.getIV();
 
-        byte[] data = password.getBytes("UTF-8");
-        byte[] finalData = cipher.doFinal(data);
-        String encryptedPassword = Base64.getEncoder().encodeToString(finalData);
-        String iv = Base64.getEncoder().encodeToString(IV);
-        String finalString = iv + " " + encryptedPassword;
+            byte[] data = password.getBytes("UTF-8");
+            byte[] finalData = cipher.doFinal(data);
+            String encryptedPassword = Base64.getEncoder().encodeToString(finalData);
+            String iv = Base64.getEncoder().encodeToString(IV);
+            String finalString = iv + " " + encryptedPassword;
+            return finalString;
 
-        return finalString;
-
+        }catch(IllegalArgumentException | KeyStoreException e){
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public String AESDecryption(String iv, String encryptedPassword){
+    public String AESDecryption(String iv, String encryptedPassword, String username){
         SecretKey syncKey = null;
         Cipher cipher = null;
+        SecretKey testKey = null;
         byte[] bytes = null;
         byte[] bIv = Base64.getDecoder().decode(iv);
+
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
-            syncKey = (SecretKey) keyStore.getKey("syncKey", null);
-        }catch(KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException ex){
-            ex.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        }
-
-        try {
+            syncKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
             cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             cipher.init(Cipher.DECRYPT_MODE, syncKey, new IvParameterSpec(bIv));
+            byte[] stringBytes = Base64.getDecoder().decode(encryptedPassword);
+            bytes = cipher.doFinal(stringBytes);
         }catch(NoSuchAlgorithmException | NoSuchPaddingException ex){
             ex.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
-        }
-
-        //cipher.update(encryptedPassword);
-        byte[] stringBytes = Base64.getDecoder().decode(encryptedPassword);
-        try{
-            bytes = cipher.doFinal(stringBytes);
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         String password = new String(bytes, StandardCharsets.UTF_8);
+        /*if(CheckIfKeyUsageDepleted(username)){
+            DeleteKey(username);
+            //AESEncryptionKeyGenerator(username);
+
+        }*/
+
+
         return password;
+    }
+
+    public boolean CheckIfKeyUsageDepleted(String username){
+        SecretKey testKey = null;
+        try{
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            testKey = (SecretKey) keyStore.getKey("syncKey" + username, null);
+            if(testKey == null){
+                return true;
+            }else{
+                return false;
+            }
+
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+        return false;
+
     }
 
     public void TimerSyncKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
@@ -205,10 +270,20 @@ public class Encryption implements Serializable {
 
     }
 
-    public void DeleteKey() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-        KeyStore keystore = KeyStore.getInstance("AndroidKeyStore");
-        keystore.load(null);
-        keystore.deleteEntry("syncKey");
+    public void DeleteKey(String username){
+        try{
+            KeyStore keystore = KeyStore.getInstance("AndroidKeyStore");
+            keystore.load(null);
+            keystore.deleteEntry("syncKey" + username);
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
 }

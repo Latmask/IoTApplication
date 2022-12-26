@@ -9,9 +9,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etUsername, etPassword;
