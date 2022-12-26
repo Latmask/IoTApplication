@@ -41,43 +41,51 @@ public class VoiceReasoner {
                 mainActivity.speakText("Error: No devices of this type are connected with this application");
                 mainActivity.setTvMessage("Error: No devices of this type are connected with this application");
             } else if (spokenText.contains("turn on")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Light light : listOfLights) {
-                            commandsToActuator.sendToRun(light, "TurnOn");
+                for(Light light : listOfLights){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
+                            Boolean check = commandsToActuator.sendToRun(light, "TurnOn");
+                            if(check == false){
+                                this.cancel(true);
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Light light : listOfLights) {
+                        @Override
+                        protected void onPostExecute(Void v) {
+                            if(isCancelled()){
+                                return;
+                            }
                             light.turnON();
                         }
-                        mainActivity.saveData();
-                        mainActivity.setTvMessage("All lights are now turned on");
-                        mainActivity.speakText("All lights are now turned on");
-                    }
-                }.execute(1);
+                    }.execute(1);
+                    mainActivity.saveData();
+                    mainActivity.setTvMessage("All reachable lights are now turned on");
+                    mainActivity.speakText("All reachable lights are now turned on");
+                }
             } else if (spokenText.contains("turn off")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Light light : listOfLights) {
-                            commandsToActuator.sendToRun(light, "TurnOff");
+                for(Light light : listOfLights){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
+                            Boolean check = commandsToActuator.sendToRun(light, "TurnOff");
+                            if(check == false){
+                                this.cancel(true);
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Light light : listOfLights) {
+                        @Override
+                        protected void onPostExecute(Void v) {
+                            if(isCancelled()){
+                                return;
+                            }
                             light.turnOff();
                         }
-                        mainActivity.saveData();
-                        mainActivity.setTvMessage("All lights are now turned off");
-                        mainActivity.speakText("All lights are now turned off");
-                    }
-                }.execute(1);
+                    }.execute(1);
+                    mainActivity.saveData();
+                    mainActivity.setTvMessage("All reachable lights are now turned off");
+                    mainActivity.speakText("All reachable lights are now turned off");
+                }
             }
         }
         else if(spokenText.contains("turn on")){
@@ -91,11 +99,19 @@ public class VoiceReasoner {
                         new AsyncTask<Integer, Void, Void>(){
                             @Override
                             protected Void doInBackground(Integer... params) {
-                                commandsToActuator.sendToRun(light, "TurnOn");
+                                Boolean check = commandsToActuator.sendToRun(light, "TurnOn");
+                                if(check == false){
+                                    this.cancel(true);
+                                }
                                 return null;
                             }
                             @Override
                             protected void onPostExecute(Void v) {
+                                if(isCancelled()){
+                                    mainActivity.setTvMessage("Error: Light " + light.getName() + " cannot be reached");
+                                    mainActivity.speakText("Error: Light " + light.getName() + " cannot be reached");
+                                    return;
+                                }
                                 light.turnON();
                                 mainActivity.saveData();
                                 mainActivity.setTvMessage("Light " + light.getName() + " is now turned on");
@@ -122,11 +138,19 @@ public class VoiceReasoner {
                         new AsyncTask<Integer, Void, Void>(){
                             @Override
                             protected Void doInBackground(Integer... params) {
-                                commandsToActuator.sendToRun(light, "TurnOff");
+                                Boolean check = commandsToActuator.sendToRun(light, "TurnOff");
+                                if(check == false){
+                                    this.cancel(true);
+                                }
                                 return null;
                             }
                             @Override
                             protected void onPostExecute(Void v) {
+                                if(isCancelled()){
+                                    mainActivity.setTvMessage("Error: Light " + light.getName() + " cannot be reached");
+                                    mainActivity.speakText("Error: Light " + light.getName() + " cannot be reached");
+                                    return;
+                                }
                                 light.turnOff();
                                 mainActivity.saveData();
                                 mainActivity.setTvMessage("Light " + light.getName() + " is now turned off");
