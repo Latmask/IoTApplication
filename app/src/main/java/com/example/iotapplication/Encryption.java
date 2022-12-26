@@ -4,8 +4,6 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -28,6 +26,10 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -46,8 +48,6 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
 
 public class Encryption{
-    private ArrayList<Light> listOfLights;
-    private ArrayList<Lock> listOfLocks;
     private Date endDate = null;
 
     public KeyStore GetKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
@@ -216,6 +216,8 @@ public class Encryption{
             //AESEncryptionKeyGenerator(username);
 
         }*/
+
+
         return password;
     }
 

@@ -6,6 +6,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.crypto.SecretKey;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DBNAME = "Login.db";
@@ -36,10 +49,10 @@ public class DBHelper extends SQLiteOpenHelper {
         myDB.delete("user", "username = ?", usernameArray);*/
 
 
-
         contentValues.put("username", username);
         contentValues.put("password", encryptedPassword);
         long result = myDB.insert("user", null, contentValues);
+
         return result != -1;
     }
 
@@ -63,6 +76,13 @@ public class DBHelper extends SQLiteOpenHelper {
             String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
             String[] splitter = encryptedPassword.split(" ", 2);
             String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
+
+
+            if(e.CheckIfKeyUsageDepleted(username)){
+                this.insertData(username, enteredPassword);
+            }
+
+
             if(correctPassword.equals(enteredPassword)){
                 return true;
             }else{
@@ -70,4 +90,5 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
 }
