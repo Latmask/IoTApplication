@@ -18,8 +18,8 @@ public class VoiceReasoner {
 
     public void voiceReasoner(String spokenText){
         if(spokenText.contains("light") && spokenText.contains("lock")){
-            mainActivity.setTvMessage("Error: Please only give a command to one device at a time");
-            mainActivity.speakText("Error: Please only give a command to one device at a time");
+            mainActivity.setTvMessage("Error: Please only give a command to one type of device at a time");
+            mainActivity.speakText("Error: Please only give a command to one type of device at a time");
         }
 
         else if(spokenText.contains("light")){
@@ -29,8 +29,8 @@ public class VoiceReasoner {
             voiceLockReasoner(spokenText);
         }
         else{
-            mainActivity.setTvMessage("Error: Please only give a command to one device at a time");
-            mainActivity.speakText("Error: Please only give a command to one device at a time");
+            mainActivity.setTvMessage("Error: Unintelligible command, please try again");
+            mainActivity.speakText("Error: Unintelligible command, please try again");
         }
     }
 
@@ -41,43 +41,39 @@ public class VoiceReasoner {
                 mainActivity.speakText("Error: No devices of this type are connected with this application");
                 mainActivity.setTvMessage("Error: No devices of this type are connected with this application");
             } else if (spokenText.contains("turn on")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Light light : listOfLights) {
+                for(Light light : listOfLights){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
                             commandsToActuator.sendToRun(light, "TurnOn");
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Light light : listOfLights) {
+                        @Override
+                        protected void onPostExecute(Void v) {
                             light.turnON();
                         }
-                        mainActivity.saveData();
-                        mainActivity.setTvMessage("All lights are now turned on");
-                        mainActivity.speakText("All lights are now turned on");
-                    }
-                }.execute(1);
+                    }.execute(1);
+                }
+                mainActivity.saveData();
+                mainActivity.setTvMessage("All reachable lights are now turned on");
+                mainActivity.speakText("All reachable lights are now turned on");
             } else if (spokenText.contains("turn off")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Light light : listOfLights) {
+                for(Light light : listOfLights){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
                             commandsToActuator.sendToRun(light, "TurnOff");
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Light light : listOfLights) {
+                        @Override
+                        protected void onPostExecute(Void v) {
                             light.turnOff();
                         }
-                        mainActivity.saveData();
-                        mainActivity.setTvMessage("All lights are now turned off");
-                        mainActivity.speakText("All lights are now turned off");
-                    }
-                }.execute(1);
+                    }.execute(1);
+                }
+                mainActivity.saveData();
+                mainActivity.setTvMessage("All reachable lights are now turned off");
+                mainActivity.speakText("All reachable lights are now turned off");
             }
         }
         else if(spokenText.contains("turn on")){
