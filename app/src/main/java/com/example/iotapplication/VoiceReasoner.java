@@ -45,17 +45,11 @@ public class VoiceReasoner {
                     new AsyncTask<Integer, Void, Void>(){
                         @Override
                         protected Void doInBackground(Integer... params) {
-                            Boolean check = commandsToActuator.sendToRun(light, "TurnOn");
-                            if(check == false){
-                                this.cancel(true);
-                            }
+                            commandsToActuator.sendToRun(light, "TurnOn");
                             return null;
                         }
                         @Override
                         protected void onPostExecute(Void v) {
-                            if(isCancelled()){
-                                return;
-                            }
                             light.turnON();
                         }
                     }.execute(1);
@@ -68,17 +62,11 @@ public class VoiceReasoner {
                     new AsyncTask<Integer, Void, Void>(){
                         @Override
                         protected Void doInBackground(Integer... params) {
-                            Boolean check = commandsToActuator.sendToRun(light, "TurnOff");
-                            if(check == false){
-                                this.cancel(true);
-                            }
+                            commandsToActuator.sendToRun(light, "TurnOff");
                             return null;
                         }
                         @Override
                         protected void onPostExecute(Void v) {
-                            if(isCancelled()){
-                                return;
-                            }
                             light.turnOff();
                         }
                     }.execute(1);
@@ -99,19 +87,11 @@ public class VoiceReasoner {
                         new AsyncTask<Integer, Void, Void>(){
                             @Override
                             protected Void doInBackground(Integer... params) {
-                                Boolean check = commandsToActuator.sendToRun(light, "TurnOn");
-                                if(check == false){
-                                    this.cancel(true);
-                                }
+                                commandsToActuator.sendToRun(light, "TurnOn");
                                 return null;
                             }
                             @Override
                             protected void onPostExecute(Void v) {
-                                if(isCancelled()){
-                                    mainActivity.setTvMessage("Error: Light " + light.getName() + " cannot be reached");
-                                    mainActivity.speakText("Error: Light " + light.getName() + " cannot be reached");
-                                    return;
-                                }
                                 light.turnON();
                                 mainActivity.saveData();
                                 mainActivity.setTvMessage("Light " + light.getName() + " is now turned on");
@@ -138,19 +118,11 @@ public class VoiceReasoner {
                         new AsyncTask<Integer, Void, Void>(){
                             @Override
                             protected Void doInBackground(Integer... params) {
-                                Boolean check = commandsToActuator.sendToRun(light, "TurnOff");
-                                if(check == false){
-                                    this.cancel(true);
-                                }
+                                commandsToActuator.sendToRun(light, "TurnOff");
                                 return null;
                             }
                             @Override
                             protected void onPostExecute(Void v) {
-                                if(isCancelled()){
-                                    mainActivity.setTvMessage("Error: Light " + light.getName() + " cannot be reached");
-                                    mainActivity.speakText("Error: Light " + light.getName() + " cannot be reached");
-                                    return;
-                                }
                                 light.turnOff();
                                 mainActivity.saveData();
                                 mainActivity.setTvMessage("Light " + light.getName() + " is now turned off");
