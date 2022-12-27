@@ -3,6 +3,7 @@ package com.example.iotapplication;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -38,10 +39,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Encryption e = new Encryption();
         e.AESEncryptionKeyGenerator(username);
         String encryptedPassword = e.AESEncryptionApplication(password, username);
-
-        /*String[] usernameArray = new String[]{username};
-        myDB.delete("user", "username = ?", usernameArray);*/
-
 
         contentValues.put("username", username);
         contentValues.put("password", encryptedPassword);
@@ -106,16 +103,32 @@ public class DBHelper extends SQLiteOpenHelper {
             String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
             String[] splitter = encryptedPassword.split(" ", 2);
             String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
+            Boolean testPassword = correctPassword.equals(enteredPassword);
 
-
-            if(e.CheckIfKeyUsageDepleted(username)){
-                this.insertLoginData(username, enteredPassword);
+            if (testPassword) {
+                if (e.CheckIfKeyUsageDepleted(username)) {
+                    changePassword(username, enteredPassword);
+                }
             }
 
             cursor.close();
-            return correctPassword.equals(enteredPassword);
-            //return cursor.getCount() > 0;
+            return testPassword;
+        }catch(CursorIndexOutOfBoundsException ex){
+            return false;
         }
+    }
+
+    public void changePassword(String username, String enteredPassword){
+        SQLiteDatabase iotDB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        Encryption e = new Encryption();
+
+        e.DeleteKey(username);
+        e.AESEncryptionKeyGenerator(username);
+        String encryptedPassword = e.AESEncryptionApplication(enteredPassword, username);
+        contentValues.put("password", encryptedPassword);
+        iotDB.update("user", contentValues, "username = ?", new String[] {username} );
+
     }
 
 }
