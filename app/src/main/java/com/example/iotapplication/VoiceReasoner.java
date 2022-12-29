@@ -51,10 +51,10 @@ public class VoiceReasoner {
                         @Override
                         protected void onPostExecute(Void v) {
                             light.turnON();
+                            mainActivity.saveData();
                         }
                     }.execute(1);
                 }
-                mainActivity.saveData();
                 mainActivity.setTvMessage("All reachable lights are now turned on");
                 mainActivity.speakText("All reachable lights are now turned on");
             } else if (spokenText.contains("turn off")) {
@@ -68,10 +68,10 @@ public class VoiceReasoner {
                         @Override
                         protected void onPostExecute(Void v) {
                             light.turnOff();
+                            mainActivity.saveData();
                         }
                     }.execute(1);
                 }
-                mainActivity.saveData();
                 mainActivity.setTvMessage("All reachable lights are now turned off");
                 mainActivity.speakText("All reachable lights are now turned off");
             }
@@ -174,8 +174,8 @@ public class VoiceReasoner {
                     protected void onPostExecute(Void v) {
                         for (Lock lock : listOfLocks) {
                             lock.turnON();
+                            mainActivity.saveData();
                         }
-                        mainActivity.saveData();
                         mainActivity.setTvMessage("All locks are now turned on");
                         mainActivity.speakText("All locks are now turned on");
                     }
@@ -194,8 +194,8 @@ public class VoiceReasoner {
                     protected void onPostExecute(Void v) {
                         for (Lock lock : listOfLocks) {
                             lock.turnOff();
+                            mainActivity.saveData();
                         }
-                        mainActivity.saveData();
                         mainActivity.setTvMessage("All locks are now turned off");
                         mainActivity.speakText("All locks are now turned off");
                     }
