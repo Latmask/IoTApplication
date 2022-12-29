@@ -127,11 +127,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        textToSpeech.shutdown();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        textToSpeech.shutdown();
+//    }
 
     //Use this method for any string that should be voiced by textToSpeech
     void speakText(String toSpeak) {
