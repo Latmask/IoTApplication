@@ -106,7 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Boolean testPassword = correctPassword.equals(enteredPassword);
 
             if (testPassword) {
-                if (e.CheckIfKeyUsageDepleted(username)) {
+                if (e.checkIfKeyUsageDepleted(username)) {
                     changePassword(username, enteredPassword);
                 }
             }
