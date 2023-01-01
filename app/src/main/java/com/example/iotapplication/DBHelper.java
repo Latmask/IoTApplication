@@ -107,7 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             if (testPassword) {
                 if (e.checkIfKeyUsageDepleted(username)) {
-                    changePassword(username, enteredPassword);
+                    changePasswordEncryption(username, enteredPassword);
                 }
             }
 
@@ -118,7 +118,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void changePassword(String username, String enteredPassword){
+    public void changePasswordEncryption(String username, String enteredPassword){
         SQLiteDatabase iotDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         Encryption e = new Encryption();
