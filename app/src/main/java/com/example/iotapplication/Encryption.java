@@ -116,7 +116,7 @@ public class Encryption{
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                        .setMaxUsageCount(2)
+                        .setMaxUsageCount(60)
                         .setKeySize(128)
                         .build());
 
@@ -205,17 +205,11 @@ public class Encryption{
             e.printStackTrace();
         }
         String password = new String(bytes, StandardCharsets.UTF_8);
-        /*if(CheckIfKeyUsageDepleted(username)){
-            DeleteKey(username);
-            //AESEncryptionKeyGenerator(username);
-
-        }*/
-
 
         return password;
     }
 
-    public boolean CheckIfKeyUsageDepleted(String username){
+    public boolean checkIfKeyUsageDepleted(String username){
         SecretKey testKey = null;
         try{
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
