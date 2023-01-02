@@ -105,10 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
             String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
             Boolean testPassword = correctPassword.equals(enteredPassword);
 
-            if (testPassword) {
-                if (e.checkIfKeyUsageDepleted(username)) {
-                    changePasswordEncryption(username, enteredPassword);
-                }
+            if (e.checkIfKeyUsageDepleted(username)) {
+                changePasswordEncryption(username, enteredPassword);
             }
 
             cursor.close();
