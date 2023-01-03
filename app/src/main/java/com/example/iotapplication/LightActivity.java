@@ -48,10 +48,10 @@ public class LightActivity extends AppCompatActivity {
         rView.addItemDecoration(itemDecoration);
 
         // Get list of lights
-        /*gson = new Gson();
+        gson = new Gson();
         String lightData = iotDB.getLightData(User.getName());
         Type light = new TypeToken<ArrayList<Light>>() {}.getType();
-        listOfLights = gson.fromJson(lightData, light);*/
+        listOfLights = gson.fromJson(lightData, light);
 
         // Create adapter passing in the light data and attach it to recyclerview to populate items
         adapter = new ActuatorAdapter(this, listOfLights, "light");
