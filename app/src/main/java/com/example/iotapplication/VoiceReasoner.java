@@ -55,8 +55,8 @@ public class VoiceReasoner {
                         }
                     }.execute(1);
                 }
-                mainActivity.setTvMessage("All reachable lights are now turned on");
-                mainActivity.speakText("All reachable lights are now turned on");
+                mainActivity.setTvMessage("All lights are now turned on");
+                mainActivity.speakText("All lights are now turned on");
             } else if (spokenText.contains("turn off")) {
                 for(Light light : listOfLights){
                     new AsyncTask<Integer, Void, Void>(){
@@ -72,8 +72,8 @@ public class VoiceReasoner {
                         }
                     }.execute(1);
                 }
-                mainActivity.setTvMessage("All reachable lights are now turned off");
-                mainActivity.speakText("All reachable lights are now turned off");
+                mainActivity.setTvMessage("All lights are now turned off");
+                mainActivity.speakText("All lights are now turned off");
             }
         }
         else if(spokenText.contains("turn on")){
