@@ -101,11 +101,9 @@ public class VoiceReasoner {
                     }
                     return;
                 }
-                else{
-                    mainActivity.setTvMessage("No such device is connected with this application");
-                    mainActivity.speakText("No such device is connected with this application");
-                }
             }
+            mainActivity.setTvMessage("No such device is connected with this application");
+            mainActivity.speakText("No such device is connected with this application");
         }
         else if(spokenText.contains("turn off")){
             for(Light light : listOfLights){
@@ -132,11 +130,9 @@ public class VoiceReasoner {
                     }
                     return;
                 }
-                else {
-                    mainActivity.speakText("No such device is connected with this application");
-                    mainActivity.setTvMessage("No such device is connected with this application");
-                }
             }
+            mainActivity.speakText("No such device is connected with this application");
+            mainActivity.setTvMessage("No such device is connected with this application");
         }
         else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Light light : listOfLights){
@@ -227,11 +223,9 @@ public class VoiceReasoner {
                     }
                     return;
                 }
-                else{
-                    mainActivity.setTvMessage("No such device is connected with this application");
-                    mainActivity.speakText("No such device is connected with this application");
-                }
             }
+            mainActivity.setTvMessage("No such device is connected with this application");
+            mainActivity.speakText("No such device is connected with this application");
         }
         else if(spokenText.contains("turn off")){
             for(Lock lock : listOfLocks){
@@ -258,11 +252,9 @@ public class VoiceReasoner {
                     }
                     return;
                 }
-                else {
-                    mainActivity.setTvMessage("No such device is connected with this application");
-                    mainActivity.speakText("No such device is connected with this application");
-                }
             }
+            mainActivity.setTvMessage("No such device is connected with this application");
+            mainActivity.speakText("No such device is connected with this application");
         }
         else if(spokenText.contains("check") || spokenText.contains("status")){
             for(Lock lock : listOfLocks){

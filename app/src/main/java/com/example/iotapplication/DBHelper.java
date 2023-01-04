@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase iotDB, int i, int i1) {
         iotDB.execSQL("DROP TABLE IF EXISTS user");
+        onCreate(iotDB);
     }
 
     public Boolean insertLoginData(String username, String password){
@@ -100,6 +101,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 "SELECT * FROM user WHERE username = ?",
                 new String[]{username})) {
             cursor.moveToFirst();
+
+            // return if database is empty
+            if(cursor.getCount() == 0) {
+                return false;
+            }
+
             String encryptedPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
             String[] splitter = encryptedPassword.split(" ", 2);
             String correctPassword = e.AESDecryption(splitter[0], splitter[1], username);
