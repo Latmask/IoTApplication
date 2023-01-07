@@ -40,8 +40,3 @@ else:
                 pubkey=pubkey, nonce=nonce, oauthSignature=oauthSignature, timestamp=timestamp, token=token),
         },
     )
-# Output/response from GET-request
-responseData = response.json()
-
-# Uncomment to print response :)
-# print(json.dumps(responseData, indent=4, sort_keys=True))
