@@ -58,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId()){
             case (R.id.fabMicrophone):
                 displaySpeechRecognizer();
-                speakText("Text to speech is functional");
+
+                //Test to see if text-to-speech is functional
+//                speakText("Text to speech is functional");
                 break;
             case (R.id.fabLight):
                 changeActivity(LightActivity.class);
@@ -126,12 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textToSpeech.setLanguage(Locale.ENGLISH);
         }
     }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        textToSpeech.shutdown();
-//    }
 
     //Use this method for any string that should be voiced by textToSpeech
     void speakText(String toSpeak) {
