@@ -1,9 +1,7 @@
 package com.example.iotapplication;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-
 import android.os.AsyncTask;
-
 import java.util.ArrayList;
 
 public class VoiceReasoner {
@@ -155,47 +153,42 @@ public class VoiceReasoner {
         ArrayList<Lock> listOfLocks = mainActivity.getListOfLocks();
         if(spokenText.contains("all")) {
             if (listOfLocks.isEmpty()) {
-                mainActivity.setTvMessage("Error: No devices of this type are connected with this application");
                 mainActivity.speakText("Error: No devices of this type are connected with this application");
+                mainActivity.setTvMessage("Error: No devices of this type are connected with this application");
             } else if (spokenText.contains("turn on")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Lock lock : listOfLocks) {
+                for(Lock lock : listOfLocks){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
                             commandsToActuator.sendToRun(lock, "TurnOn");
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Lock lock : listOfLocks) {
+                        @Override
+                        protected void onPostExecute(Void v) {
                             lock.turnON();
                             mainActivity.saveData();
                         }
-                        mainActivity.setTvMessage("All locks are now turned on");
-                        mainActivity.speakText("All locks are now turned on");
-                    }
-                }.execute(1);
-            }
-            else if (spokenText.contains("turn off")) {
-                new AsyncTask<Integer, Void, Void>(){
-                    @Override
-                    protected Void doInBackground(Integer... params) {
-                        for (Lock lock : listOfLocks) {
+                    }.execute(1);
+                }
+                mainActivity.setTvMessage("All locks are now turned on");
+                mainActivity.speakText("All locks are now turned on");
+            } else if (spokenText.contains("turn off")) {
+                for(Lock lock : listOfLocks){
+                    new AsyncTask<Integer, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Integer... params) {
                             commandsToActuator.sendToRun(lock, "TurnOff");
+                            return null;
                         }
-                        return null;
-                    }
-                    @Override
-                    protected void onPostExecute(Void v) {
-                        for (Lock lock : listOfLocks) {
+                        @Override
+                        protected void onPostExecute(Void v) {
                             lock.turnOff();
                             mainActivity.saveData();
                         }
-                        mainActivity.setTvMessage("All locks are now turned off");
-                        mainActivity.speakText("All locks are now turned off");
-                    }
-                }.execute(1);
+                    }.execute(1);
+                }
+                mainActivity.setTvMessage("All locks are now turned off");
+                mainActivity.speakText("All locks are now turned off");
             }
         }
         else if(spokenText.contains("turn on")){
