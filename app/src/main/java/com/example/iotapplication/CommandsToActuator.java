@@ -2,14 +2,10 @@ package com.example.iotapplication;
 
 import android.os.StrictMode;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
 
 public class CommandsToActuator {
 
@@ -22,7 +18,6 @@ public class CommandsToActuator {
         }
     }
 
-    //Taken from lab2, should work as it is
     public void run(String command) {
         String hostname = "192.168.0.35";
         String username = "pi";
