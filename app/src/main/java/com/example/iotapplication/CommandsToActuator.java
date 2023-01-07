@@ -8,7 +8,7 @@ import ch.ethz.ssh2.Session;
 public class CommandsToActuator {
 
     public void sendToRun(Actuator actuator, String Command){
-        if(Command == "TurnOn"){
+        if(Command.equals("TurnOn")){
             run("python actuator_reasoner.py TurnOn " + actuator.getActuatorID());
         }
         else {
@@ -30,7 +30,7 @@ public class CommandsToActuator {
             conn.connect(); //start connection to the hostname
             boolean isAuthenticated = conn.authenticateWithPassword(username,
                     password);
-            if (isAuthenticated == false)
+            if (!isAuthenticated)
                 throw new IOException("Authentication failed.");
             Session sess = conn.openSession();
             sess.execCommand(command);
