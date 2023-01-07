@@ -7,13 +7,6 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import javax.crypto.SecretKey;
-
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DBNAME = "Login.db";

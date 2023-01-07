@@ -69,17 +69,17 @@ public class LockActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int position = adapter.getSelectedItemPosition();
                 if (position != -1) {
-                    showCustomDialog(position);
+                    showChangeNameDialog(position);
                 }
             }
         });
     }
 
     /**
-     * Creates custom dialog to change the name of an actuator.
+     * Creates dialog to change the name of an actuator.
      * @param position is the position of the actuator in the list
      */
-    void showCustomDialog(int position) {
+    void showChangeNameDialog(int position) {
         Dialog dialog = new Dialog(LockActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
