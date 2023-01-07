@@ -1,9 +1,7 @@
 package com.example.iotapplication;
 
 import android.os.StrictMode;
-
 import java.io.IOException;
-
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 
