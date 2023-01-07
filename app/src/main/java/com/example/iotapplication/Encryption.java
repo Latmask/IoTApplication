@@ -96,7 +96,16 @@ public class Encryption {
             e.printStackTrace();
         }
         return false;
+    }
 
+    public void DeleteKey(String username){
+        try{
+            KeyStore keystore = KeyStore.getInstance("AndroidKeyStore");
+            keystore.load(null);
+            keystore.deleteEntry("syncKey" + username);
+        } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 }
 
