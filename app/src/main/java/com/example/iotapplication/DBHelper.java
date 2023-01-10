@@ -106,7 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Boolean testPassword = correctPassword.equals(enteredPassword);
 
             if (e.checkIfKeyUsageDepleted(username)) {
-                changePasswordEncryption(username, enteredPassword);
+                changePasswordEncryption(username, correctPassword);
             }
 
             cursor.close();
@@ -116,14 +116,14 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void changePasswordEncryption(String username, String enteredPassword){
+    public void changePasswordEncryption(String username, String correctPassword){
         SQLiteDatabase iotDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         Encryption e = new Encryption();
 
         e.DeleteKey(username);
         e.AESEncryptionKeyGenerator(username);
-        String encryptedPassword = e.AESEncryptionApplication(enteredPassword, username);
+        String encryptedPassword = e.AESEncryptionApplication(correctPassword, username);
         contentValues.put("password", encryptedPassword);
         iotDB.update("user", contentValues, "username = ?", new String[] {username} );
 
