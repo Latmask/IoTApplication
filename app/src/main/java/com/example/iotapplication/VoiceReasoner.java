@@ -9,6 +9,7 @@ public class VoiceReasoner {
     private MainActivity mainActivity;
     private CommandsToActuator commandsToActuator = new CommandsToActuator();
 
+    //Needs to take MainActivity as parameter to get the right instance of MainActivity, the one initially created to run the application
     public VoiceReasoner(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
@@ -77,7 +78,7 @@ public class VoiceReasoner {
         else if(spokenText.contains("turn on")){
             for(Light light : listOfLights){
                 if(containsIgnoreCase(spokenText, light.getName()) || containsIgnoreCase(spokenText, light.getNumName())){
-                    if(light.getStatus()){
+                    if(light.getStatus()){ //getStatus is true if the actuator is already turned on, otherwise false
                         mainActivity.setTvMessage("Light " + light.getName() + " is already turned on");
                         mainActivity.speakText("Light " + light.getName() + " is already turned on");
                     }
