@@ -7,6 +7,8 @@ import ch.ethz.ssh2.Session;
 
 public class CommandsToActuator {
 
+    //Helper method that takes in the actuator and command as parameter and passes everything on to run,
+    //the String includes the name of the python script, an the command parameter and ID parameter of the actuator to affect
     public void sendToRun(Actuator actuator, String Command){
         if(Command.equals("TurnOn")){
             run("python actuator_reasoner.py TurnOn " + actuator.getActuatorID());
@@ -21,8 +23,7 @@ public class CommandsToActuator {
         String username = "pi";
         String password = "IoT@2021";
 
-        StrictMode.ThreadPolicy policy = new
-                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         try {
