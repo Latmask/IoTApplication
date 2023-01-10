@@ -41,14 +41,19 @@ public class VoiceReasoner {
                 mainActivity.setTvMessage("Error: No devices of this type are connected with this application");
             } else if (spokenText.contains("turn on")) {
                 for(Light light : listOfLights){
+                    //Reason to use AsynTask is to perform heavy tasks in the background,
+                    // this way the main thread running the application won't get held up performing lengthy instructions
+                    //This makes sure the application, or the main thread responsible for the GUI doesn't slow down, freeze or crash
                     new AsyncTask<Integer, Void, Void>(){
                         @Override
                         protected Void doInBackground(Integer... params) {
+                            //Everything in doInBackground is executed in it's own thread
                             commandsToActuator.sendToRun(light, "TurnOn");
                             return null;
                         }
                         @Override
                         protected void onPostExecute(Void v) {
+                            //onPostExecute delivers the result's to the main UI thread and stops the asyncTask process
                             light.turnON();
                             mainActivity.saveData();
                         }
