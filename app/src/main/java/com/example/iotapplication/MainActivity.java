@@ -72,9 +72,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void saveData() {
+        //
         Gson gson = new Gson();
         String lightData = gson.toJson(listOfLights);
         String lockData = gson.toJson(listOfLocks);
+        //username parameter tells which row in the SQL database that will be updated,
+        //second parameter tells which column that will be updated and third contains the new data
         iotDB.updateActuatorData(username, "light_data", lightData);
         iotDB.updateActuatorData(username, "lock_data", lockData);
     }
@@ -96,13 +99,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void displaySpeechRecognizer() {
+        //Sends an explict intent to RecognizerIntent with ACTION_RECOGNIZE_SPEECH,
+        // which defines the request to start the activity that will prompt the Android Speech recognizer
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        //putExtra adds extra data to be sent with the intent
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     // This starts the activity and populates the intent with the speech text.
         someActivityResultLauncher.launch(intent);
     }
 
     // You can do the assignment inside onAttach or onCreate, i.e, before the activity is displayed
+    //registerForActivityResult takes the ActivityResultContracts contract and ActivityResultCallback callBack function
+    //and returns an ActivityResultLauncher.
+    //ActivityResultContracts specifies that an activity can be called with an input of I and produce output of O,
+    //it also makes the calling the activity for result type-safe, or in other words ensure that
+    // the the code doesn't perform any invalid operations on the underlying object
+    //ActivityResultsCallback is a type-safe callback that gets called when the activityResult is available.
+    //A callback is is a function that is passed into another function as an argument and is expected to execute after some kind of event.
+    //Essentially ActivityResultsCallback is meant to inform registerForActivityResult that the work in ActivityResult is done.
+    //"This is very useful when working with Asynchronous tasks."
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -111,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
                         Intent data = result.getData();
-                        assert data != null;
+                        assert data != null; // JVM checks that the data returns a non-null value, if it is nulls will throw an AssertionError
                         List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                         String spokenTextInitial = results.get(0).toLowerCase();
                         String spokenText = spokenTextInitial.toLowerCase();
