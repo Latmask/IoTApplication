@@ -87,17 +87,17 @@ public class DBHelper extends SQLiteOpenHelper {
         try (Cursor cursor = iotDB.rawQuery(
                 "SELECT * FROM user WHERE username = ?", //sends SQL query to check if the user is there
                 new String[] {username})) {
-            return cursor.getCount() > 0; //If a matching username is found cursor will greater than 0
+            return cursor.getCount() > 0; //If a matching username is found cursor will greater than 0, if a username is found the cursor will point at something other than 0
         }
     }
 
     public Boolean checkUsernamePassword(String username, String enteredPassword){
-        SQLiteDatabase iotDB = this.getWritableDatabase();
+        SQLiteDatabase iotDB = this.getWritableDatabase();//Should also be getReadableDatabase
         Encryption e = new Encryption();
-        try (Cursor cursor = iotDB.rawQuery(
+        try (Cursor cursor = iotDB.rawQuery( //Cursor points to the same place as the given username
                 "SELECT * FROM user WHERE username = ?",
                 new String[]{username})) {
-            cursor.moveToFirst();
+            cursor.moveToFirst(); //Actually points to the first row in the username, there should only one row
 
             // return if database is empty
             // first time we run the application the database will be empty,
