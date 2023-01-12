@@ -3,6 +3,7 @@ package com.example.iotapplication;
 Singleton class with User name
  */
 public class User {
+    //User is a singleton, so that the classes in the application can get the user data from anywhere
 
     private static final User INSTANCE = new User();
     private static String name;

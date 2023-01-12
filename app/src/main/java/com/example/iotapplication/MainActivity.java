@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void saveData() {
-        //
+        //Reason we use Gson is that it's a class that can convert something to a Json object, so that we can save the listOfLights or listOflocks of objects as a String
         Gson gson = new Gson();
         String lightData = gson.toJson(listOfLights);
         String lockData = gson.toJson(listOfLocks);
@@ -86,12 +86,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Gson gson = new Gson();
         String lightData = iotDB.getLightData(username);
         String lockData = iotDB.getLockData(username);
-        Type light = new TypeToken<ArrayList<Light>>() {}.getType();
+        Type light = new TypeToken<ArrayList<Light>>() {}.getType(); //Sets light to the correct type
         Type lock = new TypeToken<ArrayList<Lock>>() {}.getType();
-        listOfLights = gson.fromJson(lightData, light);
+        listOfLights = gson.fromJson(lightData, light); //Converts the String (lightData) to an arraylist of Light
         listOfLocks = gson.fromJson(lockData, lock);
 
-        if (listOfLights == null || listOfLocks == null) {
+        if (listOfLights == null || listOfLocks == null) { //Only empty the first time one runs the application with a new user account
             listOfLights = new ArrayList<>();
             listOfLocks = new ArrayList<>();
             createActuatorsTest();
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // which defines the request to start the activity that will prompt the Android Speech recognizer
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         //putExtra adds extra data to be sent with the intent
+        //EXTRA_LANGUAGE_MODEL informs the recogniser which speech model to prefer, LANGUAGE_MODEL_FREE_FORM is a value for EXTRA_LANGUAGE_MODEL to perform free form speech recognition, like normal talking input
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     // This starts the activity and populates the intent with the speech text.
         someActivityResultLauncher.launch(intent);
@@ -127,15 +128,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // There are no request codes
                         Intent data = result.getData();
                         assert data != null; // JVM checks that the data returns a non-null value, if it is nulls will throw an AssertionError
-                        List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                        String spokenTextInitial = results.get(0).toLowerCase();
+                        List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS); //The results of the voice input given by the user
+                        String spokenTextInitial = results.get(0).toLowerCase(); //Converts the string to lowercase to counteract string sensitivity in the different checks
                         String spokenText = spokenTextInitial.toLowerCase();
                         voiceReasoner.voiceReasoner(spokenText);
                     }
                 }
             });
 
-    //Initializes textToSpeech, options of textToSpeech like language, pitch etc can be changed here
+    //Initializes textToSpeech, is run when the textToSpeech is created, options of textToSpeech like language, pitch etc can be changed here
     @Override
     public void onInit(int i) {
         if(i!=TextToSpeech.ERROR){
@@ -146,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Use this method for any string that should be voiced by textToSpeech
     void speakText(String toSpeak) {
-        textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+        textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);//QUEUE_FLUSH means that we flush the textToSpeech que, whenever we receive more input to it,
+        //so incase we give several commands in a row, the earlier one will be overwritten before it can finish by the later one
     }
 
     //Used for testing
@@ -174,12 +176,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         saveData();
     }
 
+    //Help method to change to light or lock activity
     public void changeActivity(Class<? extends Activity> destinationActivity) {
         Intent intent = new Intent(this, destinationActivity);
         startActivity(intent);
         finish();
     }
 
+    //Called by the VoiceReasoner whenever it wants to change the text in the middle textView
     void setTvMessage(String tvMessage) {
         this.tvMessage.setText(tvMessage);
     }

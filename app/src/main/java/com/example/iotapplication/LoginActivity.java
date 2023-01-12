@@ -28,18 +28,18 @@ public class LoginActivity extends AppCompatActivity {
         DB = new DBHelper(this);
 
         bLogin.setOnClickListener(view -> {
-            String username = etUsername.getText().toString();
+            String username = etUsername.getText().toString();//Takes whats currently written into the EditText
             String password = etPassword.getText().toString();
 
             if (username.equals("") || password.equals("")) {
                 Toast.makeText(getApplicationContext(), "Please enter all the fields", Toast.LENGTH_SHORT).show();
             } else {
-                Boolean credentialsMatch = DB.checkUsernamePassword(username, password);
+                Boolean credentialsMatch = DB.checkUsernamePassword(username, password); //Checks that the entered username and password matches the one in the database
                 if (credentialsMatch) {
                     Toast.makeText(LoginActivity.this, "Sign in successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    User.setName(username);
-                    etUsername.setText("");
+                    User.setName(username);//Sets the name for current singleton object of the user class
+                    etUsername.setText(""); //Ensures that the EditText gets emptied after user has logged in
                     etPassword.setText("");
                     startActivity(intent);
                 } else {
@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         tvRegister.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+            Intent intent = new Intent(getApplicationContext(), RegisterActivity.class); //Go from the context we are to the RegisterActivity
             startActivity(intent);
         });
     }

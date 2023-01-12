@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister = findViewById(R.id.bRegister);
 
         bRegister.setOnClickListener(view -> {
-            if(registerIsValid()){
+            if(registerIsValid()){ //Starts the method to check if the input registration information is valid, if it returns true it's valid
                 toastMessageShort("Registered successfully");
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
 
-        Boolean userExists = DB.checkUsername(username);
+        Boolean userExists = DB.checkUsername(username); //Checks if the user allready exists in the database
         if (userExists) {
             toastMessageShort("User already exists");
             return false;
