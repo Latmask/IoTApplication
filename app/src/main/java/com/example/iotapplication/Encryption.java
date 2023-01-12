@@ -28,12 +28,12 @@ public class Encryption {
     public void AESEncryptionKeyGenerator(String username) {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");//Makes a keyGenerator of an AES type, and specifices where the password should be stored.
-            //"AndroidKeyStore" is secure from external access, so the passwords entirely secure
+            //"AndroidKeyStore" is secure from external access, so the keys entirely secure
 
             keyGenerator.init(
                     new KeyGenParameterSpec.Builder("syncKey" + username, //username is needed to link a specific key to a specific user
                             KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC) // Does an XOR operation on the earlier data encrypted, with the new plaintext you want to encrypt. Then chains this multiple times, resulting in a stronger encryption.
+                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC) // Does an XOR operation on the earlier data encrypted, with the new plaintext you want to encrypt. Then chains this multiple times, resulting in a stronger encryption. CBC stands for cipher block chaining
                             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7) //Pads the encrypted password with extra data, making it harder to crack because you cannot guess the length
                             .setMaxUsageCount(60) //Amount of times the key can be used, after 60 times it cannot be accessed anymore from AndroidKeyStore
                             .setKeySize(128) //Size of the key, 128 is considered having a good speed and security balance
