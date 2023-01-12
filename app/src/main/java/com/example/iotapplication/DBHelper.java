@@ -114,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
             //Each time decryption is performed cipher usage value will go up by one, so after each time we have used the password we need to check if we have used up all the uses
             //and if we have we need to call the changePasswordEncrpytion method to generate a new key, this has to be done before the application forgots the correct password
             if (e.checkIfKeyUsageDepleted(username)) {
-                changePasswordEncryption(username, enteredPassword);
+                changePasswordEncryption(username, correctPassword);
             }
 
             cursor.close();
@@ -124,14 +124,14 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void changePasswordEncryption(String username, String enteredPassword){
+    public void changePasswordEncryption(String username, String correctPassword){
         SQLiteDatabase iotDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         Encryption e = new Encryption();
 
         e.DeleteKey(username); //Deletes the key from AndroidKeyStore
         e.AESEncryptionKeyGenerator(username); //Generates a new key with the username
-        String encryptedPassword = e.AESEncryptionApplication(enteredPassword, username); //Applies the encryption on the entered password
+        String encryptedPassword = e.AESEncryptionApplication(correctPassword, username); //Applies the encryption on the entered password
         contentValues.put("password", encryptedPassword);
         iotDB.update("user", contentValues, "username = ?", new String[] {username} ); //Where the username matches we replace the old encrypted password with the new one
 
