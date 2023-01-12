@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Light> listOfLights;
     private ArrayList<Lock> listOfLocks;
     private TextToSpeech textToSpeech;
-    private FloatingActionButton fabMicrophone, fabLight, fabLock;
+    private FloatingActionButton fabMicrophone, fabLight, fabLock; //FloatingActionButton was used to make sure the icons looked like what we wanted
     private VoiceReasoner voiceReasoner;
     DBHelper iotDB;
     String username;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         voiceReasoner = new VoiceReasoner(this);
 
         textToSpeech = new TextToSpeech(this, this);
-        loadData();
+        loadData(); //Loads in from the database the actuators connected to this user and their status
     }
 
     public void onClick(View v) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void saveData() {
         //Reason we use Gson is that it's a class that can convert something to a Json object, so that we can save the listOfLights or listOflocks of objects as a String
         Gson gson = new Gson();
-        String lightData = gson.toJson(listOfLights);
+        String lightData = gson.toJson(listOfLights); //Here the arraylist of objects is converted into a String of objects by Gson into the Json format
         String lockData = gson.toJson(listOfLocks);
         //username parameter tells which row in the SQL database that will be updated,
         //second parameter tells which column that will be updated and third contains the new data
@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadData() {
-        Gson gson = new Gson();
+        Gson gson = new Gson(); //
         String lightData = iotDB.getLightData(username);
         String lockData = iotDB.getLockData(username);
-        Type light = new TypeToken<ArrayList<Light>>() {}.getType(); //Sets light to the correct type
+        Type light = new TypeToken<ArrayList<Light>>() {}.getType(); //Defines light as an object of the type Light, might be an unnecessary step?
         Type lock = new TypeToken<ArrayList<Lock>>() {}.getType();
         listOfLights = gson.fromJson(lightData, light); //Converts the String (lightData) to an arraylist of Light
         listOfLocks = gson.fromJson(lockData, lock);

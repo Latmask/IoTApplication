@@ -14,13 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+//This class is meant to turn all the objects of lights or locks to views that can be
+//shown in the recyclerview
+//Every item shown in the list on the Light/LockActivity page is a ViewHolder from this class
 public class ActuatorAdapter extends RecyclerView.Adapter<ActuatorAdapter.ViewHolder> {
 
     Context context;
-    private List<? extends Actuator> mActuator;
+    private List<? extends Actuator> mActuator; //Makes sure we can accept lists of all the subtypes of Actuator
     private int selectedItemPosition = -1;
     private final int DARK_GREEN = 0xFF00F60D;
-    String typeOfData;
+    String typeOfData; //Needed for us to know what kind of layout we will need later
 
     public ActuatorAdapter(Context context, List<? extends Actuator> actuators, String type) {
         mActuator = actuators;
@@ -31,7 +34,7 @@ public class ActuatorAdapter extends RecyclerView.Adapter<ActuatorAdapter.ViewHo
     /**
      * Provide a reference to each of the views within an actuator item
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder { //Inner class needed to be able to reach every item's view
         public TextView tvName;
         public ImageView status;
 
@@ -57,7 +60,7 @@ public class ActuatorAdapter extends RecyclerView.Adapter<ActuatorAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(context); //Instantiates the XML file of the object to their view
         View actuatorView;
         // Inflate the custom layout
         if(typeOfData.equals("light")) {

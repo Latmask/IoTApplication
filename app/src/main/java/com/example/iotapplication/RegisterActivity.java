@@ -63,8 +63,8 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
 
-        Boolean userCreated = DB.insertLoginData(username, password);
-        if (!userCreated) {
+        Boolean userCreated = DB.insertLoginData(username, password); //It's here that the user is created
+        if (!userCreated) { //If the method insertLoginData fails to create the user it returns false
             toastMessageShort("Registration failed");
             return false;
         }
