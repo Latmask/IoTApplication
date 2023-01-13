@@ -42,7 +42,7 @@ public class CommandsToActuator {
             conn.close();
         } catch (IOException e) {
             e.printStackTrace(System.err);
-            System.exit(2);
+            System.exit(2); //A 2 in System.exit indicates an unsuccessful termination
         }
     }
 }
