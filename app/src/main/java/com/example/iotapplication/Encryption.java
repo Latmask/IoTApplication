@@ -57,7 +57,7 @@ public class Encryption {
             byte[] IV = cipher.getIV(); //IV value is used to chain the encryption in the block mode and is needed to decrypt the data
 
             byte[] data = password.getBytes("UTF-8"); //As the encryption is done as bytes we need to convert the password to an array of bytes
-            byte[] finalData = cipher.doFinal(data); //Applicates the encryption end ensures that the data is encrypted
+            byte[] finalData = cipher.doFinal(data); //Applicates the encryption and ensures that the data is encrypted
             String encryptedPassword = Base64.getEncoder().encodeToString(finalData); //As we want to save the password as a String we want to convert the encrypted password back into a String from bytes
             String iv = Base64.getEncoder().encodeToString(IV); //Also converts the IV value to a String, becuase we later need the IV value to decrypt the data
             return iv + " " + encryptedPassword; //Returns both the IV value and encryptedPassword as a String becuase we need to save both to decrypt the data later
